@@ -184,4 +184,95 @@
 
     </section>
 
+    {{-- FITUR --}}
+    <section id="features" class="w-full px-4 md:px-18 py-16 md:py-24">
+
+        {{-- Text tengah --}}
+        <div class="text-center max-w-2xl mx-auto">
+            <h2 class="font-serif text-3xl md:text-4xl font-bold text-gray-900">
+                Fitur Lengkap untuk Semua Kebutuhan Undangan
+            </h2>
+            <p class="mt-4 text-gray-600">
+                Fitur lengkap yang praktis, modern, dan interaktif — siap membantumu membuat undangan yang menarik dan
+                membagikannya kapan saja.
+            </p>
+        </div>
+
+        {{-- Grid: teks kiri | icon tengah | teks kanan --}}
+        <div class="mt-16 max-w-4xl mx-auto divide-y divide-gray-100">
+            @php
+                $features = [
+                    [
+                        'title' => 'Aktif Selamanya',
+                        'desc' =>
+                            'Website undangan digitalmu tetap aktif tanpa batas waktu. Bisa dibuka kapan saja oleh tamu.',
+                    ],
+                    [
+                        'title' => 'Atur Tampilan Undangan',
+                        'desc' =>
+                            'Edit tampilan undangan online sesuai gaya dan tema pernikahanmu, langsung dari dashboard.',
+                    ],
+                    [
+                        'title' => 'Music',
+                        'desc' =>
+                            'Tambahkan musik latar yang membuat undangan digital kamu terasa lebih hidup dan berkesan.',
+                    ],
+                    [
+                        'title' => "Ucapan & Do'a",
+                        'desc' => 'Terima ucapan dan doa dari tamu langsung melalui halaman undangan online kamu.',
+                    ],
+                    [
+                        'title' => 'Kado',
+                        'desc' =>
+                            'Terima kado cashless atau hadiah lainnya dengan mudah melalui fitur pemberian kado digital.',
+                    ],
+                    [
+                        'title' => 'Galeri Foto & Video',
+                        'desc' =>
+                            'Tampilkan foto prewedding dan video kenangan terbaik langsung di halaman undangan digital.',
+                    ],
+                    [
+                        'title' => 'Live Streaming',
+                        'desc' =>
+                            'Bagikan link live streaming agar tamu yang tidak hadir tetap bisa mengikuti acara pernikahanmu.',
+                    ],
+                    [
+                        'title' => 'Kirim WA',
+                        'desc' =>
+                            'Kirim undangan digital kamu ke WhatsApp tamu untuk lebih personal dan dekat dengan tamu.',
+                    ],
+                ];
+                $rows = array_chunk($features, 2);
+            @endphp
+
+            @foreach ($rows as $row)
+                <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-6 py-8">
+
+                    {{-- Teks kiri --}}
+                    <div class="text-right">
+                        <h3 class="font-semibold text-gray-900">{{ $row[0]['title'] }}</h3>
+                        <p class="mt-1 text-sm text-gray-600">{{ $row[0]['desc'] }}</p>
+                    </div>
+
+                    {{-- Icon tengah --}}
+                    <div class="w-12 h-12 rounded-full bg-gray-900 flex items-center justify-center shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+
+                    {{-- Teks kanan --}}
+                    <div class="text-left">
+                        <h3 class="font-semibold text-gray-900">{{ $row[1]['title'] }}</h3>
+                        <p class="mt-1 text-sm text-gray-600">{{ $row[1]['desc'] }}</p>
+                    </div>
+
+                </div>
+            @endforeach
+        </div>
+
+    </section>
+
 @endsection
