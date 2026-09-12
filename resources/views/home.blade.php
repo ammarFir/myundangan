@@ -437,7 +437,19 @@
 
 
     {{-- FOOTER --}}
-    <footer class="w-full bg-gray-900 text-gray-300 px-4 md:px-18 py-4">
+    <footer class="w-full bg-gray-900 text-gray-300 px-4 md:px-18 py-4
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    ">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
 
             {{-- Logo + deskripsi --}}
