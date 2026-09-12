@@ -52,4 +52,9 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->role === 'admin';
     }
+
+    public function undangans () {
+        //1 user bisa punya banyak undangan
+        return $this->hasMany(Undangan::class);
+    }
 }
