@@ -119,8 +119,28 @@
                 <label class="block mb-1 text-sm font-medium text-gray-700">Alamat Lengkap</label>
                 {{-- textarea juga bisa pakai wire:model --}}
                 <textarea wire:model="alamat" rows="3"
+                    class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900"></textarea> 
+            </div>
+         
+
+            <div>
+                <label class="block mb-1 text-sm font-medium text-gray-700">Teks Ayat/Kutipan</label>
+                <textarea wire:model="ayat_teks" rows="3"
                     class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900"></textarea>
             </div>
+
+            <div>
+                <label class="block mb-1 text-sm font-medium text-gray-700">Arti/Terjemahan</label>
+                <textarea wire:model="ayat_arti" rows="3"
+                    class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900"></textarea>
+            </div>
+
+            <div>
+                <label class="block mb-1 text-sm font-medium text-gray-700">Sumber (contoh: Ar-Rum: 21)</label>
+                <input type="text" wire:model="ayat_sumber"
+                    class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900">
+            </div>
+
 
             <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
                 <div>

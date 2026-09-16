@@ -18,10 +18,13 @@ class Undangan extends Model
         'waktu_acara',
         'lokasi',
         'alamat',
-        'link-maps',
+        'link_maps',
         'link_streaming',
         'musik',
         'status',
+        'ayat_teks',
+        'ayat_arti',
+        'ayat_sumber',
     ];
 
     public function user(){
