@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.site')
 
 @section('title', 'Undanganku - Undangan Digital Modern & Elegan')
 
@@ -6,8 +6,8 @@
 
     {{-- NAVBAR --}}
     {{-- NAVBAR --}}
-    <header class="w-full sticky top-0 z-50 bg-white">
-        <nav class="w-full flex items-center justify-between px-4 md:px-18 py-3">
+    <header class="sticky top-0 z-50 w-full bg-white">
+        <nav class="flex items-center justify-between w-full px-4 py-3 md:px-18">
 
             {{-- Logo kiri --}}
             <a href="{{ url('/') }}" class="text-xl font-bold text-gray-900">
@@ -16,15 +16,15 @@
 
             {{-- Menu + Login + CTA, semua digabung di kanan --}}
             <div class="flex items-center gap-8">
-                <a href="#" class="hidden md:inline text-sm font-medium text-gray-600 hover:text-gray-900">Beranda</a>
-                <a href="#themes" class="hidden md:inline text-sm font-medium text-gray-600 hover:text-gray-900">Tema</a>
-                <a href="#features" class="hidden md:inline text-sm font-medium text-gray-600 hover:text-gray-900">Fitur</a>
-                <a href="#pricing" class="hidden md:inline text-sm font-medium text-gray-600 hover:text-gray-900">Harga</a>
-                <a href="#faq" class="hidden md:inline text-sm font-medium text-gray-600 hover:text-gray-900">FAQ</a>
+                <a href="#" class="hidden text-sm font-medium text-gray-600 md:inline hover:text-gray-900">Beranda</a>
+                <a href="#themes" class="hidden text-sm font-medium text-gray-600 md:inline hover:text-gray-900">Tema</a>
+                <a href="#features" class="hidden text-sm font-medium text-gray-600 md:inline hover:text-gray-900">Fitur</a>
+                <a href="#pricing" class="hidden text-sm font-medium text-gray-600 md:inline hover:text-gray-900">Harga</a>
+                <a href="#faq" class="hidden text-sm font-medium text-gray-600 md:inline hover:text-gray-900">FAQ</a>
 
                 <a href="#" class="text-sm font-semibold text-gray-700 hover:text-gray-900">Login</a>
                 <a href="#"
-                    class="text-sm font-semibold bg-gray-900 text-white px-4 py-2 rounded-full hover:bg-gray-700">
+                    class="px-4 py-2 text-sm font-semibold text-white bg-gray-900 rounded-full hover:bg-gray-700">
                     Buat Undangan
                 </a>
             </div>
@@ -32,30 +32,30 @@
         </nav>
     </header>
     {{-- HERO --}}
-    <section class="w-full px-4 md:px-18 py-8 md:py-10 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+    <section class="grid items-center w-full grid-cols-1 gap-12 px-4 py-8 md:px-18 md:py-10 md:grid-cols-2">
         {{-- Kiri: Text --}}
         <div>
-            <h1 class="font-serif text-4xl md:text-5xl font-bold text-gray-900 leading-tight"> Undangan Digital Modern &
+            <h1 class="font-serif text-4xl font-bold leading-tight text-gray-900 md:text-5xl"> Undangan Digital Modern &
                 Elegan, Siap Dibagikan Dalam Hitungan Menit
             </h1>
 
-            <p class="mt-6 text-lg text-gray-600 leading-relaxed">
+            <p class="mt-6 text-lg leading-relaxed text-gray-600">
                 Buat undangan digital yang cantik, cepat dan mudah diedit — lengkap dengan RSVP online,
                 galeri foto & video, musik, dan berbagai tema pilihan.
             </p>
 
-            <div class="mt-8 flex flex-wrap gap-4">
+            <div class="flex flex-wrap gap-4 mt-8">
                 <a href="#"
-                    class="text-sm font-semibold bg-gray-900 text-white px-6 py-3 rounded-full hover:bg-gray-700">
+                    class="px-6 py-3 text-sm font-semibold text-white bg-gray-900 rounded-full hover:bg-gray-700">
                     Buat Undangan Gratis
                 </a>
                 <a href="#themes"
-                    class="text-sm font-semibold text-gray-700 border border-gray-300 px-6 py-3 rounded-full hover:bg-gray-50">
+                    class="px-6 py-3 text-sm font-semibold text-gray-700 border border-gray-300 rounded-full hover:bg-gray-50">
                     Lihat Demo
                 </a>
             </div>
 
-            <div class="mt-10 flex flex-wrap gap-8">
+            <div class="flex flex-wrap gap-8 mt-10">
                 <div>
                     <p class="text-2xl font-bold text-gray-900">10.000+</p>
                     <p class="text-sm text-gray-500">Pasangan</p>
@@ -88,14 +88,14 @@
             {{-- Frame HP --}}
             <div class="relative w-[300px] h-[620px] bg-gray-900 rounded-[3rem] p-3 shadow-2xl">
                 {{-- Notch --}}
-                <div class="absolute top-3 left-1/2 -translate-x-1/2 w-32 h-6 bg-gray-900 rounded-b-2xl z-10"></div>
+                <div class="absolute z-10 w-32 h-6 -translate-x-1/2 bg-gray-900 top-3 left-1/2 rounded-b-2xl"></div>
 
                 {{-- Layar --}}
                 <div class="relative w-full h-full rounded-[2.25rem] overflow-hidden bg-white">
                     <template x-for="(img, index) in images" :key="index">
                         <img :src="img" x-show="slide === index"
                             x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0"
-                            x-transition:enter-end="opacity-100" class="absolute inset-0 w-full h-full object-cover">
+                            x-transition:enter-end="opacity-100" class="absolute inset-0 object-cover w-full h-full">
                     </template>
                 </div>
             </div>
@@ -109,11 +109,11 @@
 
 
     {{-- TEMA --}}
-    <section id="themes" class="w-full px-4 md:px-18 py-16 md:py-24">
+    <section id="themes" class="w-full px-4 py-16 md:px-18 md:py-24">
 
         {{-- Text tengah --}}
-        <div class="text-center max-w-2xl mx-auto">
-            <h2 class="font-serif text-3xl md:text-4xl font-bold text-gray-900">
+        <div class="max-w-2xl mx-auto text-center">
+            <h2 class="font-serif text-3xl font-bold text-gray-900 md:text-4xl">
                 Pilihan Tema Undangan yang Siap Dipakai
             </h2>
             <p class="mt-4 text-gray-600">
@@ -128,7 +128,7 @@
         }">
 
             {{-- Track tema --}}
-            <div x-ref="track" class="flex gap-6 overflow-x-auto scroll-smooth px-2 py-2 no-scrollbar">
+            <div x-ref="track" class="flex gap-6 px-2 py-2 overflow-x-auto scroll-smooth no-scrollbar">
                 @php
                     $themes = [
                         'Timeless Snapshot',
@@ -142,11 +142,11 @@
 
                 @foreach ($themes as $theme)
                     <div class="flex-shrink-0 w-56">
-                        <div class="w-full h-80 rounded-2xl overflow-hidden bg-gray-100">
+                        <div class="w-full overflow-hidden bg-gray-100 h-80 rounded-2xl">
                             <img src="https://placehold.co/300x450/e5e7eb/6b7280?text={{ urlencode($theme) }}"
-                                class="w-full h-full object-cover">
+                                class="object-cover w-full h-full">
                         </div>
-                        <p class="mt-3 text-center font-medium text-gray-900">{{ $theme }}</p>
+                        <p class="mt-3 font-medium text-center text-gray-900">{{ $theme }}</p>
                         <div class="mt-2 text-center">
                             <a href="#" class="text-sm text-gray-600 underline hover:text-gray-900">Lihat Demo</a>
                         </div>
@@ -157,14 +157,14 @@
             {{-- Tombol kiri-kanan di bawah track --}}
             <div class="flex justify-center gap-4 mt-6">
                 <button @click="scrollLeft()"
-                    class="w-10 h-10 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center hover:bg-gray-50">
+                    class="flex items-center justify-center w-10 h-10 bg-white border border-gray-200 rounded-full shadow-sm hover:bg-gray-50">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
                     </svg>
                 </button>
                 <button @click="scrollRight()"
-                    class="w-10 h-10 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center hover:bg-gray-50">
+                    class="flex items-center justify-center w-10 h-10 bg-white border border-gray-200 rounded-full shadow-sm hover:bg-gray-50">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
@@ -175,9 +175,9 @@
         </div>
 
         {{-- Lihat semua tema --}}
-        <div class="text-center mt-10">
+        <div class="mt-10 text-center">
             <a href="#"
-                class="inline-block text-sm font-semibold text-gray-900 border border-gray-300 px-6 py-3 rounded-full hover:bg-gray-50">
+                class="inline-block px-6 py-3 text-sm font-semibold text-gray-900 border border-gray-300 rounded-full hover:bg-gray-50">
                 Lihat Semua Tema →
             </a>
         </div>
@@ -185,11 +185,11 @@
     </section>
 
     {{-- FITUR --}}
-    <section id="features" class="w-full px-4 md:px-18 py-16 md:py-24">
+    <section id="features" class="w-full px-4 py-16 md:px-18 md:py-24">
 
         {{-- Text tengah --}}
-        <div class="text-center max-w-2xl mx-auto">
-            <h2 class="font-serif text-3xl md:text-4xl font-bold text-gray-900">
+        <div class="max-w-2xl mx-auto text-center">
+            <h2 class="font-serif text-3xl font-bold text-gray-900 md:text-4xl">
                 Fitur Lengkap untuk Semua Kebutuhan Undangan
             </h2>
             <p class="mt-4 text-gray-600">
@@ -199,7 +199,7 @@
         </div>
 
         {{-- Grid 2 kolom, tiap fitur punya icon sendiri --}}
-        <div class="mt-16 max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8">
+        <div class="grid max-w-3xl grid-cols-1 mx-auto mt-16 md:grid-cols-2 gap-x-10 gap-y-8">
             @php
                 $features = [
                     [
@@ -260,7 +260,7 @@
 
             @foreach ($features as $feature)
                 <div class="flex items-start gap-4">
-                    <div class="w-12 h-12 rounded-full bg-gray-900 flex items-center justify-center shrink-0">
+                    <div class="flex items-center justify-center w-12 h-12 bg-gray-900 rounded-full shrink-0">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="{{ $feature['icon'] }}" />
@@ -280,11 +280,11 @@
 
 
     {{-- HARGA --}}
-    <section id="pricing" class="w-full px-4 md:px-18 py-16 md:py-24 bg-gray-50">
+    <section id="pricing" class="w-full px-4 py-16 md:px-18 md:py-24 bg-gray-50">
 
         {{-- Text tengah --}}
-        <div class="text-center max-w-2xl mx-auto">
-            <h2 class="font-serif text-3xl md:text-4xl font-bold text-gray-900">
+        <div class="max-w-2xl mx-auto text-center">
+            <h2 class="font-serif text-3xl font-bold text-gray-900 md:text-4xl">
                 Satu Harga, Semua Tema
             </h2>
             <p class="mt-4 text-gray-600">
@@ -293,10 +293,10 @@
         </div>
 
         {{-- 2 card --}}
-        <div class="mt-12 max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid max-w-3xl grid-cols-1 gap-6 mx-auto mt-12 md:grid-cols-2">
 
             {{-- Card Gratis --}}
-<div class="bg-white border border-gray-200 rounded-2xl p-8 flex flex-col h-full">
+<div class="flex flex-col h-full p-8 bg-white border border-gray-200 rounded-2xl">
                 <h3 class="font-semibold text-gray-900">Preview Gratis</h3>
                 <p class="mt-2 text-3xl font-bold text-gray-900">Rp 0</p>
                 <p class="mt-1 text-sm text-gray-500">Lihat-lihat dulu sebelum beli</p>
@@ -325,18 +325,18 @@
                     </li>
                 </ul>
 
-        <div class="mt-auto pt-8">
+        <div class="pt-8 mt-auto">
     <a href="#"
-        class="block text-center text-sm font-semibold text-gray-900 border border-gray-300 px-6 py-3 rounded-full hover:bg-gray-50">
+        class="block px-6 py-3 text-sm font-semibold text-center text-gray-900 border border-gray-300 rounded-full hover:bg-gray-50">
         Coba Preview
     </a>
 </div>
             </div>
 
             {{-- Card Berbayar --}}
-            <div class="bg-gray-900 rounded-2xl p-8 relative">
+            <div class="relative p-8 bg-gray-900 rounded-2xl">
                 <span
-                    class="absolute -top-3 left-1/2 -translate-x-1/2 bg-white text-gray-900 text-xs font-semibold px-3 py-1 rounded-full">
+                    class="absolute px-3 py-1 text-xs font-semibold text-gray-900 -translate-x-1/2 bg-white rounded-full -top-3 left-1/2">
                     Paling Favorit
                 </span>
 
@@ -376,7 +376,7 @@
                 </ul>
 
                 <a href="#"
-                    class="mt-8 block text-center text-sm font-semibold bg-white text-gray-900 px-6 py-3 rounded-full hover:bg-gray-100">
+                    class="block px-6 py-3 mt-8 text-sm font-semibold text-center text-gray-900 bg-white rounded-full hover:bg-gray-100">
                     Aktifkan Sekarang
                 </a>
             </div>
@@ -387,11 +387,11 @@
 
 
     {{-- FAQ --}}
-    <section id="faq" class="w-full px-4 md:px-18 py-16 md:py-24">
+    <section id="faq" class="w-full px-4 py-16 md:px-18 md:py-24">
 
         {{-- Text tengah --}}
-        <div class="text-center max-w-2xl mx-auto">
-            <h2 class="font-serif text-3xl md:text-4xl font-bold text-gray-900">
+        <div class="max-w-2xl mx-auto text-center">
+            <h2 class="font-serif text-3xl font-bold text-gray-900 md:text-4xl">
                 Pertanyaan yang Sering Ditanyakan
             </h2>
             <p class="mt-4 text-gray-600">
@@ -400,7 +400,7 @@
         </div>
 
         {{-- Accordion --}}
-        <div class="mt-12 max-w-2xl mx-auto divide-y divide-gray-200" x-data="{ open: null }">
+        <div class="max-w-2xl mx-auto mt-12 divide-y divide-gray-200" x-data="{ open: null }">
             @php
                 $faqs = [
                     ['q' => 'Apa itu undangan digital?', 'a' => 'Undangan digital adalah undangan berbentuk halaman website yang bisa dibagikan lewat link, lengkap dengan info acara, galeri foto, RSVP, dan fitur interaktif lainnya — tanpa perlu cetak undangan fisik.'],
@@ -416,15 +416,15 @@
             @foreach ($faqs as $index => $faq)
                 <div class="py-5">
                     <button @click="open = open === {{ $index }} ? null : {{ $index }}"
-                        class="w-full flex items-center justify-between text-left">
+                        class="flex items-center justify-between w-full text-left">
                         <span class="font-medium text-gray-900">{{ $faq['q'] }}</span>
-                        <svg class="w-5 h-5 text-gray-400 shrink-0 transition-transform"
+                        <svg class="w-5 h-5 text-gray-400 transition-transform shrink-0"
                             :class="open === {{ $index }} ? 'rotate-45' : ''" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                         </svg>
                     </button>
-                                                          <div x-show="open === {{ $index }}" x-collapse class="text-sm text-gray-600 leading-relaxed">
+                                                          <div x-show="open === {{ $index }}" x-collapse class="text-sm leading-relaxed text-gray-600">
                         <p class="pt-3">{{ $faq['a'] }}</p>
                     </div>
                 </div>
@@ -437,25 +437,13 @@
 
 
     {{-- FOOTER --}}
-    <footer class="w-full bg-gray-900 text-gray-300 px-4 md:px-18 py-4
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    ">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
+    <footer class="w-full px-4 py-4 text-gray-300 bg-gray-900 md:px-18 ">
+        <div class="grid grid-cols-1 gap-10 md:grid-cols-4">
 
             {{-- Logo + deskripsi --}}
             <div class="md:col-span-2">
                 <a href="{{ url('/') }}" class="text-xl font-bold text-white">Undanganku</a>
-                <p class="mt-4 text-sm text-gray-400 leading-relaxed max-w-sm">
+                <p class="max-w-sm mt-4 text-sm leading-relaxed text-gray-400">
                     Bikin undangan digital yang cantik, cepat, dan mudah dibagikan ke semua orang terkasih —
                     tanpa ribet, tanpa cetak.
                 </p>
@@ -483,7 +471,7 @@
             </div>
 
         </div>
-<div class="mt-6 pt-4 border-t border-gray-800 text-sm text-gray-500 text-center">
+<div class="pt-4 mt-6 text-sm text-center text-gray-500 border-t border-gray-800">
     © {{ date('Y') }} Undanganku. All rights reserved.
 </div>
     </footer>
