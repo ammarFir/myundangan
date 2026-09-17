@@ -1,3 +1,4 @@
+@php use Illuminate\Support\Facades\Storage; @endphp
 <div class="max-w-4xl px-4 py-8 mx-auto">
 
     {{-- tampil hanya kalau mode = 'list' --}}
@@ -157,6 +158,113 @@
                     <input type="text" wire:model="musik"
                         class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900">
                     @error('musik')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+
+            {{-- SECTION MEMPELAI PRIA --}}
+            <div class="pt-6 border-t border-gray-200">
+                <h3 class="mb-4 font-semibold text-gray-900">Mempelai Pria</h3>
+
+                <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Nama Lengkap</label>
+                        <input type="text" wire:model="nama_lengkap_pria"
+                            class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900">
+                    </div>
+
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Anak ke Berapa</label>
+                        <input type="text" wire:model="anak_ke_pria" placeholder="Contoh: Putra pertama"
+                            class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900">
+                    </div>
+
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Dari Pasangan</label>
+                        <input type="text" wire:model="orang_tua_pria" placeholder="Contoh: Bapak Slamet & Ibu Sari"
+                            class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900">
+                    </div>
+
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Instagram (opsional)</label>
+                        <input type="text" wire:model="instagram_pria"
+                            class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900">
+                    </div>
+                </div>
+
+                <div class="mt-5">
+                    <label class="block mb-1 text-sm font-medium text-gray-700">Foto</label>
+
+                    {{-- kalau ada foto lama dan belum upload baru, tampilkan preview foto lama --}}
+                    @if ($foto_pria_lama && !$foto_pria)
+                        <img src="{{ Storage::url($foto_pria_lama) }}" class="object-cover w-24 h-24 mb-2 rounded-lg">
+                    @endif
+
+                    {{-- kalau user baru pilih file (belum disimpan ke server), Livewire bisa preview langsung --}}
+                    @if ($foto_pria)
+                        <img src="{{ $foto_pria->temporaryUrl() }}" class="object-cover w-24 h-24 mb-2 rounded-lg">
+                    @endif
+
+                    <input type="file" wire:model="foto_pria" accept="image/*"
+                        class="block text-sm text-gray-600">
+
+                    {{-- indikator kecil pas file lagi di-upload --}}
+                    <div wire:loading wire:target="foto_pria" class="mt-1 text-xs text-gray-400">Mengunggah...</div>
+
+                    @error('foto_pria')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+
+            {{-- SECTION MEMPELAI WANITA --}}
+            <div class="pt-6 border-t border-gray-200">
+                <h3 class="mb-4 font-semibold text-gray-900">Mempelai Wanita</h3>
+
+                <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Nama Lengkap</label>
+                        <input type="text" wire:model="nama_lengkap_wanita"
+                            class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900">
+                    </div>
+
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Anak ke Berapa</label>
+                        <input type="text" wire:model="anak_ke_wanita" placeholder="Contoh: Putri kedua"
+                            class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900">
+                    </div>
+
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Dari Pasangan</label>
+                        <input type="text" wire:model="orang_tua_wanita" placeholder="Contoh: Bapak Ahmad & Ibu Wati"
+                            class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900">
+                    </div>
+
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Instagram (opsional)</label>
+                        <input type="text" wire:model="instagram_wanita"
+                            class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900">
+                    </div>
+                </div>
+
+                <div class="mt-5">
+                    <label class="block mb-1 text-sm font-medium text-gray-700">Foto</label>
+
+                    @if ($foto_wanita_lama && !$foto_wanita)
+                        <img src="{{ Storage::url($foto_wanita_lama) }}" class="object-cover w-24 h-24 mb-2 rounded-lg">
+                    @endif
+
+                    @if ($foto_wanita)
+                        <img src="{{ $foto_wanita->temporaryUrl() }}" class="object-cover w-24 h-24 mb-2 rounded-lg">
+                    @endif
+
+                    <input type="file" wire:model="foto_wanita" accept="image/*"
+                        class="block text-sm text-gray-600">
+
+                    <div wire:loading wire:target="foto_wanita" class="mt-1 text-xs text-gray-400">Mengunggah...</div>
+
+                    @error('foto_wanita')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>

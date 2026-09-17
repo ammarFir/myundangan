@@ -1,4 +1,5 @@
 @extends('layouts.site')
+@php use Illuminate\Support\Facades\Storage; @endphp
 
 @section('title', $undangan->nama_pria . ' & ' . $undangan->nama_wanita)
 
@@ -80,6 +81,78 @@
                 @endif
             </div>
         @endif
+
+
+        {{-- section mempelai, tampil kalau salah satu nama lengkap ada isinya --}}
+        @if ($undangan->nama_lengkap_pria || $undangan->nama_lengkap_wanita)
+            <div class="max-w-md px-4 py-16 mx-auto text-center border-t border-gray-100">
+                <h2 class="mb-10 font-serif text-2xl font-bold text-gray-900">Mempelai</h2>
+
+                <div class="grid grid-cols-1 gap-10">
+
+                    {{-- kartu mempelai pria --}}
+                    @if ($undangan->nama_lengkap_pria)
+                        <div>
+                            {{-- foto ditampilkan bulat, cuma muncul kalau ada file-nya --}}
+                            @if ($undangan->foto_pria)
+                                <img src="{{ Storage::url($undangan->foto_pria) }}"
+                                    class="object-cover w-32 h-32 mx-auto mb-4 rounded-full">
+                            @endif
+
+                            <h3 class="font-serif text-xl font-semibold text-gray-900">
+                                {{ $undangan->nama_lengkap_pria }}
+                            </h3>
+
+                            @if ($undangan->anak_ke_pria)
+                                <p class="mt-1 text-sm text-gray-600">{{ $undangan->anak_ke_pria }}</p>
+                            @endif
+
+                            @if ($undangan->orang_tua_pria)
+                                <p class="text-sm text-gray-500">{{ $undangan->orang_tua_pria }}</p>
+                            @endif
+
+                            @if ($undangan->instagram_pria)
+                                <a href="https://instagram.com/{{ ltrim($undangan->instagram_pria, '@') }}"
+                                    target="_blank" class="inline-block mt-2 text-sm text-gray-900 underline">
+                                    @{{ ltrim($undangan->instagram_pria, '@') }}
+                                </a>
+                            @endif
+                        </div>
+                    @endif
+
+                    {{-- kartu mempelai wanita --}}
+                    @if ($undangan->nama_lengkap_wanita)
+                        <div>
+                            @if ($undangan->foto_wanita)
+                                <img src="{{ Storage::url($undangan->foto_wanita) }}"
+                                    class="object-cover w-32 h-32 mx-auto mb-4 rounded-full">
+                            @endif
+
+                            <h3 class="font-serif text-xl font-semibold text-gray-900">
+                                {{ $undangan->nama_lengkap_wanita }}
+                            </h3>
+
+                            @if ($undangan->anak_ke_wanita)
+                                <p class="mt-1 text-sm text-gray-600">{{ $undangan->anak_ke_wanita }}</p>
+                            @endif
+
+                            @if ($undangan->orang_tua_wanita)
+                                <p class="text-sm text-gray-500">{{ $undangan->orang_tua_wanita }}</p>
+                            @endif
+
+                            @if ($undangan->instagram_wanita)
+                                <a href="https://instagram.com/{{ ltrim($undangan->instagram_wanita, '@') }}"
+                                    target="_blank" class="inline-block mt-2 text-sm text-gray-900 underline">
+                                    @{{ ltrim($undangan->instagram_wanita, '@') }}
+                                </a>
+                            @endif
+                        </div>
+                    @endif
+
+                </div>
+            </div>
+        @endif
+
 
         {{-- section detail acara, id="detail" dipakai sebagai tujuan scroll tombol di atas --}}
         <div id="detail" class="max-w-md px-4 py-16 mx-auto text-center">

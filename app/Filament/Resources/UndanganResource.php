@@ -75,6 +75,60 @@ class UndanganResource extends Resource
                     ->label('Sumber (contoh: Ar-Rum: 21)')
                     ->maxLength(255),
 
+                // Section = bikin kotak berjudul, biar field mempelai pria & wanita gak campur aduk
+                Forms\Components\Section::make('Mempelai Pria')
+                    ->schema([
+                        Forms\Components\TextInput::make('nama_lengkap_pria')
+                            ->maxLength(255),
+
+                        Forms\Components\TextInput::make('anak_ke_pria')
+                            ->label('Anak ke berapa')
+                            ->placeholder('Contoh: Putra pertama')
+                            ->maxLength(255),
+
+                        Forms\Components\TextInput::make('orang_tua_pria')
+                            ->label('Dari pasangan')
+                            ->placeholder('Contoh: Bapak Slamet & Ibu Sari')
+                            ->maxLength(255),
+
+                        Forms\Components\TextInput::make('instagram_pria')
+                            ->label('Instagram (opsional)')
+                            ->maxLength(255),
+
+                        // FileUpload khusus buat gambar, otomatis kasih preview
+                        Forms\Components\FileUpload::make('foto_pria')
+                            ->image() // cuma nerima file gambar
+                            ->directory('mempelai') // disimpan di storage/app/public/mempelai
+                            ->imagePreviewHeight('150'),
+                    ])
+                    ->columns(2), // field di dalam section ini disusun 2 kolom
+
+                Forms\Components\Section::make('Mempelai Wanita')
+                    ->schema([
+                        Forms\Components\TextInput::make('nama_lengkap_wanita')
+                            ->maxLength(255),
+
+                        Forms\Components\TextInput::make('anak_ke_wanita')
+                            ->label('Anak ke berapa')
+                            ->placeholder('Contoh: Putri kedua')
+                            ->maxLength(255),
+
+                        Forms\Components\TextInput::make('orang_tua_wanita')
+                            ->label('Dari pasangan')
+                            ->placeholder('Contoh: Bapak Ahmad & Ibu Wati')
+                            ->maxLength(255),
+
+                        Forms\Components\TextInput::make('instagram_wanita')
+                            ->label('Instagram (opsional)')
+                            ->maxLength(255),
+
+                        Forms\Components\FileUpload::make('foto_wanita')
+                            ->image()
+                            ->directory('mempelai')
+                            ->imagePreviewHeight('150'),
+                    ])
+                    ->columns(2),
+
                 Forms\Components\Select::make('status')
                     ->options([
                         'draft' => 'Draft',

@@ -25,6 +25,16 @@ class Undangan extends Model
         'ayat_teks',
         'ayat_arti',
         'ayat_sumber',
+                'nama_lengkap_pria',
+        'anak_ke_pria',
+        'orang_tua_pria',
+        'instagram_pria',
+        'foto_pria',
+        'nama_lengkap_wanita',
+        'anak_ke_wanita',
+        'orang_tua_wanita',
+        'instagram_wanita',
+        'foto_wanita',
     ];
 
     public function user(){
