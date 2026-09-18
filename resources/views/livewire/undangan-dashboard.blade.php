@@ -6,20 +6,17 @@
 
         <div class="flex items-center justify-between mb-6">
             <h2 class="text-xl font-bold text-gray-900">Undangan Saya</h2>
-            {{-- wire:click memanggil method create() di file .php tanpa reload halaman --}}
             <button wire:click="create"
                 class="px-4 py-2 text-sm font-semibold text-white bg-gray-900 rounded-full hover:bg-gray-700">
                 + Buat Undangan Baru
             </button>
         </div>
 
-        {{-- kalau belum punya undangan sama sekali --}}
         @if ($undangans->isEmpty())
             <div class="py-16 text-center text-gray-500 border border-gray-300 border-dashed rounded-xl">
                 Kamu belum punya undangan. Yuk buat yang pertama!
             </div>
         @else
-            {{-- looping semua undangan yang dikirim dari render() --}}
             <div class="space-y-4">
                 @foreach ($undangans as $undangan)
                     <div class="flex items-center justify-between p-4 border border-gray-200 rounded-xl">
@@ -29,17 +26,14 @@
                             </p>
                             <p class="text-sm text-gray-500">
                                 Status:
-                                {{-- ucfirst membuat huruf pertama kapital, misal "draft" jadi "Draft" --}}
                                 <span class="font-medium">{{ ucfirst($undangan->status) }}</span>
                             </p>
                         </div>
                         <div class="flex items-center gap-3">
-                            {{-- panggil method edit(id), $undangan->id dikirim sebagai parameter --}}
                             <button wire:click="edit({{ $undangan->id }})"
                                 class="text-sm font-medium text-gray-700 hover:text-gray-900">
                                 Edit
                             </button>
-                            {{-- wire:confirm memunculkan dialog konfirmasi sebelum method dijalankan --}}
                             <button wire:click="delete({{ $undangan->id }})"
                                 wire:confirm="Yakin mau hapus undangan ini?"
                                 class="text-sm font-medium text-red-600 hover:text-red-800">
@@ -57,20 +51,17 @@
     @if ($mode === 'form')
 
         <h2 class="mb-6 text-xl font-bold text-gray-900">
-            {{-- kalau editingId ada isinya berarti mode edit, kalau kosong berarti bikin baru --}}
             {{ $editingId ? 'Edit Undangan' : 'Buat Undangan Baru' }}
         </h2>
 
-        {{-- wire:submit.prevent mencegah reload halaman, langsung panggil method save() --}}
         <form wire:submit.prevent="save" class="space-y-5">
 
+            {{-- NAMA PRIA & WANITA --}}
             <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
                 <div>
                     <label class="block mb-1 text-sm font-medium text-gray-700">Nama Pria</label>
-                    {{-- wire:model menghubungkan input ini dengan variabel $nama_pria di file .php --}}
                     <input type="text" wire:model="nama_pria"
                         class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900">
-                    {{-- menampilkan pesan error validasi khusus untuk field nama_pria --}}
                     @error('nama_pria')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -84,66 +75,123 @@
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
+            </div>
 
-                <div>
-                    <label class="block mb-1 text-sm font-medium text-gray-700">Tanggal Acara</label>
-                    <input type="date" wire:model="tanggal_acara"
-                        class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900">
-                    @error('tanggal_acara')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
+            {{-- SECTION AKAD NIKAH --}}
+            <div class="pt-6 border-t border-gray-200">
+                <h3 class="mb-4 font-semibold text-gray-900">Akad Nikah</h3>
+
+                <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Tanggal</label>
+                        <input type="date" wire:model="akad_tanggal"
+                            class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Waktu Mulai</label>
+                            <input type="time" wire:model="akad_waktu_mulai"
+                                class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900">
+                        </div>
+                        <div>
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Waktu Selesai</label>
+                            <input type="time" wire:model="akad_waktu_selesai"
+                                class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Lokasi</label>
+                        <input type="text" wire:model="akad_lokasi"
+                            class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900">
+                    </div>
+
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Link Google Maps</label>
+                        <input type="text" wire:model="akad_link_maps"
+                            class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900">
+                    </div>
                 </div>
 
-                <div>
-                    <label class="block mb-1 text-sm font-medium text-gray-700">Waktu Acara</label>
-                    <input type="time" wire:model="waktu_acara"
-                        class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900">
-                </div>
-
-                <div>
-                    <label class="block mb-1 text-sm font-medium text-gray-700">Lokasi</label>
-                    <input type="text" wire:model="lokasi"
-                        class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900">
-                </div>
-
-                <div>
-                    <label class="block mb-1 text-sm font-medium text-gray-700">Link Google Maps</label>
-                    <input type="text" wire:model="link_maps"
-                        class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900">
-                    @error('link_maps')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
+                <div class="mt-5">
+                    <label class="block mb-1 text-sm font-medium text-gray-700">Alamat Lengkap</label>
+                    <textarea wire:model="akad_alamat" rows="3"
+                        class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900"></textarea>
                 </div>
             </div>
 
-            <div>
-                <label class="block mb-1 text-sm font-medium text-gray-700">Alamat Lengkap</label>
-                {{-- textarea juga bisa pakai wire:model --}}
-                <textarea wire:model="alamat" rows="3"
-                    class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900"></textarea> 
+            {{-- SECTION RESEPSI --}}
+            <div class="pt-6 border-t border-gray-200">
+                <h3 class="mb-4 font-semibold text-gray-900">Resepsi</h3>
+
+                <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Tanggal</label>
+                        <input type="date" wire:model="resepsi_tanggal"
+                            class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Waktu Mulai</label>
+                            <input type="time" wire:model="resepsi_waktu_mulai"
+                                class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900">
+                        </div>
+                        <div>
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Waktu Selesai</label>
+                            <input type="time" wire:model="resepsi_waktu_selesai"
+                                class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Lokasi</label>
+                        <input type="text" wire:model="resepsi_lokasi"
+                            class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900">
+                    </div>
+
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Link Google Maps</label>
+                        <input type="text" wire:model="resepsi_link_maps"
+                            class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900">
+                    </div>
+                </div>
+
+                <div class="mt-5">
+                    <label class="block mb-1 text-sm font-medium text-gray-700">Alamat Lengkap</label>
+                    <textarea wire:model="resepsi_alamat" rows="3"
+                        class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900"></textarea>
+                </div>
             </div>
-         
 
-            <div>
-                <label class="block mb-1 text-sm font-medium text-gray-700">Teks Ayat/Kutipan</label>
-                <textarea wire:model="ayat_teks" rows="3"
-                    class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900"></textarea>
+            {{-- AYAT / KUTIPAN --}}
+            <div class="pt-6 border-t border-gray-200">
+                <h3 class="mb-4 font-semibold text-gray-900">Ayat / Kutipan</h3>
+
+                <div class="space-y-5">
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Teks Ayat/Kutipan</label>
+                        <textarea wire:model="ayat_teks" rows="3"
+                            class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Arti/Terjemahan</label>
+                        <textarea wire:model="ayat_arti" rows="3"
+                            class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Sumber (contoh: Ar-Rum: 21)</label>
+                        <input type="text" wire:model="ayat_sumber"
+                            class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900">
+                    </div>
+                </div>
             </div>
 
-            <div>
-                <label class="block mb-1 text-sm font-medium text-gray-700">Arti/Terjemahan</label>
-                <textarea wire:model="ayat_arti" rows="3"
-                    class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900"></textarea>
-            </div>
-
-            <div>
-                <label class="block mb-1 text-sm font-medium text-gray-700">Sumber (contoh: Ar-Rum: 21)</label>
-                <input type="text" wire:model="ayat_sumber"
-                    class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900">
-            </div>
-
-
-            <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+            {{-- LINK STREAMING & MUSIK --}}
+            <div class="grid grid-cols-1 gap-5 pt-6 border-t border-gray-200 md:grid-cols-2">
                 <div>
                     <label class="block mb-1 text-sm font-medium text-gray-700">Link Live Streaming</label>
                     <input type="text" wire:model="link_streaming"
@@ -196,12 +244,10 @@
                 <div class="mt-5">
                     <label class="block mb-1 text-sm font-medium text-gray-700">Foto</label>
 
-                    {{-- kalau ada foto lama dan belum upload baru, tampilkan preview foto lama --}}
                     @if ($foto_pria_lama && !$foto_pria)
                         <img src="{{ Storage::url($foto_pria_lama) }}" class="object-cover w-24 h-24 mb-2 rounded-lg">
                     @endif
 
-                    {{-- kalau user baru pilih file (belum disimpan ke server), Livewire bisa preview langsung --}}
                     @if ($foto_pria)
                         <img src="{{ $foto_pria->temporaryUrl() }}" class="object-cover w-24 h-24 mb-2 rounded-lg">
                     @endif
@@ -209,7 +255,6 @@
                     <input type="file" wire:model="foto_pria" accept="image/*"
                         class="block text-sm text-gray-600">
 
-                    {{-- indikator kecil pas file lagi di-upload --}}
                     <div wire:loading wire:target="foto_pria" class="mt-1 text-xs text-gray-400">Mengunggah...</div>
 
                     @error('foto_pria')
@@ -275,7 +320,6 @@
                     class="px-6 py-3 text-sm font-semibold text-white bg-gray-900 rounded-full hover:bg-gray-700">
                     Simpan
                 </button>
-                {{-- type="button" supaya tidak ikut submit form, cuma panggil method cancel() --}}
                 <button type="button" wire:click="cancel"
                     class="px-6 py-3 text-sm font-semibold text-gray-700 rounded-full hover:bg-gray-100">
                     Batal

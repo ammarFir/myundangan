@@ -45,18 +45,39 @@ class UndanganResource extends Resource
                 Forms\Components\TextInput::make('tema')
                     ->maxLength(255),
 
-                Forms\Components\DatePicker::make('tanggal_acara'),
-                Forms\Components\TimePicker::make('waktu_acara'),
 
-                Forms\Components\TextInput::make('lokasi')
-                    ->maxLength(255),
 
-                Forms\Components\TextInput::make('alamat')
-                    ->columnSpanFull(),
+                                    Forms\Components\Section::make('Akad Nikah')
+                    ->schema([
+                        Forms\Components\DatePicker::make('akad_tanggal'),
+                        Forms\Components\TimePicker::make('akad_waktu_mulai'),
+                        Forms\Components\TimePicker::make('akad_waktu_selesai'),
+                        Forms\Components\TextInput::make('akad_lokasi')
+                            ->maxLength(255),
+                        Forms\Components\Textarea::make('akad_alamat')
+                            ->columnSpanFull(),
+                        Forms\Components\TextInput::make('akad_link_maps')
+                            ->url()
+                            ->maxLength(255)
+                            ->columnSpanFull(),
+                    ])
+                    ->columns(3),
 
-                Forms\Components\TextInput::make('link_maps')
-                    ->url()
-                    ->maxLength(255),
+                Forms\Components\Section::make('Resepsi')
+                    ->schema([
+                        Forms\Components\DatePicker::make('resepsi_tanggal'),
+                        Forms\Components\TimePicker::make('resepsi_waktu_mulai'),
+                        Forms\Components\TimePicker::make('resepsi_waktu_selesai'),
+                        Forms\Components\TextInput::make('resepsi_lokasi')
+                            ->maxLength(255),
+                        Forms\Components\Textarea::make('resepsi_alamat')
+                            ->columnSpanFull(),
+                        Forms\Components\TextInput::make('resepsi_link_maps')
+                            ->url()
+                            ->maxLength(255)
+                            ->columnSpanFull(),
+                    ])
+                    ->columns(3),
 
                 Forms\Components\TextInput::make('link_streaming')
                     ->url()
@@ -153,7 +174,8 @@ class UndanganResource extends Resource
                 Tables\Columns\TextColumn::make('nama_wanita')
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('tanggal_acara')
+                              Tables\Columns\TextColumn::make('akad_tanggal')
+                    ->label('Tanggal Akad')
                     ->date()
                     ->sortable(),
 

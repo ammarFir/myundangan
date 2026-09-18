@@ -20,11 +20,6 @@ class UndanganDashboard extends Component
     //deklare field form 
     public $nama_pria = '';
     public $nama_wanita = '';
-    public $tanggal_acara = '';
-    public $waktu_acara = '';
-    public $lokasi = '';
-    public $alamat = '';
-    public $link_maps = '';
     public $link_streaming = '';
     public $musik = '';
     public $ayat_teks = '';
@@ -47,16 +42,27 @@ class UndanganDashboard extends Component
     public $foto_wanita = null;
     public $foto_wanita_lama = null;
 
+    // data acara Akad Nikah
+    public $akad_tanggal = '';
+    public $akad_waktu_mulai = '';
+    public $akad_waktu_selesai = '';
+    public $akad_lokasi = '';
+    public $akad_alamat = '';
+    public $akad_link_maps = '';
+
+    // data acara Resepsi
+    public $resepsi_tanggal = '';
+    public $resepsi_waktu_mulai = '';
+    public $resepsi_waktu_selesai = '';
+    public $resepsi_lokasi = '';
+    public $resepsi_alamat = '';
+    public $resepsi_link_maps = '';
+
     //aturan validasi tiap field , dipanggil pas simpan data
     protected function rules() {
         return [
             'nama_pria' => 'required|string|max:255',
             'nama_wanita' => 'required|string|max:255',
-            'tanggal_acara' => 'nullable|date',
-            'waktu_acara' => 'nullable',
-            'lokasi'  => 'nullable|string|max:255',
-            'alamat' => 'nullable|string',
-            'link_maps' => 'nullable|url',
             'link_streaming' => 'nullable|url',
             'musik' => 'nullable|url',
             'ayat_teks' => 'nullable|string',
@@ -72,6 +78,18 @@ class UndanganDashboard extends Component
             'orang_tua_wanita' => 'nullable|string|max:255',
             'instagram_wanita' => 'nullable|string|max:255',
             'foto_wanita' => 'nullable|image|max:2048',
+            'akad_tanggal' => 'nullable|date',
+            'akad_waktu_mulai' => 'nullable',
+            'akad_waktu_selesai' => 'nullable',
+            'akad_lokasi' => 'nullable|string|max:255',
+            'akad_alamat' => 'nullable|string',
+            'akad_link_maps' => 'nullable|url',
+            'resepsi_tanggal' => 'nullable|date',
+            'resepsi_waktu_mulai' => 'nullable',
+            'resepsi_waktu_selesai' => 'nullable',
+            'resepsi_lokasi' => 'nullable|string|max:255',
+            'resepsi_alamat' => 'nullable|string',
+            'resepsi_link_maps' => 'nullable|url',
         ];
     }
 
@@ -105,11 +123,6 @@ class UndanganDashboard extends Component
 
         $this->nama_pria = $undangan->nama_pria;
         $this->nama_wanita = $undangan->nama_wanita;
-        $this->tanggal_acara = $undangan->tanggal_acara;
-        $this->waktu_acara = $undangan->waktu_acara;
-        $this->lokasi = $undangan->lokasi;
-        $this->alamat = $undangan->alamat;
-        $this->link_maps = $undangan->link_maps;
         $this->link_streaming = $undangan->link_streaming;
         $this->musik = $undangan->musik;
         $this->ayat_teks = $undangan->ayat_teks;
@@ -129,6 +142,19 @@ class UndanganDashboard extends Component
         $this->instagram_wanita = $undangan->instagram_wanita;
         $this->foto_wanita_lama = $undangan->foto_wanita;
         $this->foto_wanita = null;
+        $this->akad_tanggal = $undangan->akad_tanggal;
+        $this->akad_waktu_mulai = $undangan->akad_waktu_mulai ? substr($undangan->akad_waktu_mulai, 0, 5) : '';
+        $this->akad_waktu_selesai = $undangan->akad_waktu_selesai ? substr($undangan->akad_waktu_selesai, 0, 5) : '';
+        $this->akad_lokasi = $undangan->akad_lokasi;
+        $this->akad_alamat = $undangan->akad_alamat;
+        $this->akad_link_maps = $undangan->akad_link_maps;
+
+        $this->resepsi_tanggal = $undangan->resepsi_tanggal;
+        $this->resepsi_waktu_mulai = $undangan->resepsi_waktu_mulai ? substr($undangan->resepsi_waktu_mulai, 0, 5) : '';
+        $this->resepsi_waktu_selesai = $undangan->resepsi_waktu_selesai ? substr($undangan->resepsi_waktu_selesai, 0, 5) : '';
+        $this->resepsi_lokasi = $undangan->resepsi_lokasi;
+        $this->resepsi_alamat = $undangan->resepsi_alamat;
+        $this->resepsi_link_maps = $undangan->resepsi_link_maps;
 
         $this->mode= 'form';
 
@@ -142,11 +168,6 @@ class UndanganDashboard extends Component
         $data = [
             'nama_pria' => $this->nama_pria,
             'nama_wanita' => $this->nama_wanita,
-            'tanggal_acara' => $this->tanggal_acara,
-            'waktu_acara' => $this->waktu_acara,
-            'lokasi' => $this->lokasi,
-            'alamat' => $this->alamat,
-            'link_maps' => $this->link_maps,
             'link_streaming' => $this->link_streaming,
             'musik' => $this->musik,
             'ayat_teks' => $this->ayat_teks,
@@ -160,6 +181,18 @@ class UndanganDashboard extends Component
             'anak_ke_wanita' => $this->anak_ke_wanita,
             'orang_tua_wanita' => $this->orang_tua_wanita,
             'instagram_wanita' => $this->instagram_wanita,
+            'akad_tanggal' => $this->akad_tanggal,
+            'akad_waktu_mulai' => $this->akad_waktu_mulai,
+            'akad_waktu_selesai' => $this->akad_waktu_selesai,
+            'akad_lokasi' => $this->akad_lokasi,
+            'akad_alamat' => $this->akad_alamat,
+            'akad_link_maps' => $this->akad_link_maps,
+            'resepsi_tanggal' => $this->resepsi_tanggal,
+            'resepsi_waktu_mulai' => $this->resepsi_waktu_mulai,
+            'resepsi_waktu_selesai' => $this->resepsi_waktu_selesai,
+            'resepsi_lokasi' => $this->resepsi_lokasi,
+            'resepsi_alamat' => $this->resepsi_alamat,
+            'resepsi_link_maps' => $this->resepsi_link_maps,
         ];
 
         // kalau user upload foto baru, simpan file-nya dan catat path-nya
@@ -205,11 +238,6 @@ class UndanganDashboard extends Component
         $this->editingId = null;
         $this->nama_pria = '';
         $this->nama_wanita = '';
-        $this->tanggal_acara = '';
-        $this->waktu_acara = '';
-        $this->lokasi = '';
-        $this->alamat = '';
-        $this->link_maps = '';
         $this->link_streaming = '';
         $this->musik = '';
         $this->ayat_teks = '';
@@ -227,5 +255,17 @@ class UndanganDashboard extends Component
         $this->instagram_wanita = '';
         $this->foto_wanita = null;
         $this->foto_wanita_lama = null;
+        $this->akad_tanggal = '';
+        $this->akad_waktu_mulai = '';
+        $this->akad_waktu_selesai = '';
+        $this->akad_lokasi = '';
+        $this->akad_alamat = '';
+        $this->akad_link_maps = '';
+        $this->resepsi_tanggal = '';
+        $this->resepsi_waktu_mulai = '';
+        $this->resepsi_waktu_selesai = '';
+        $this->resepsi_lokasi = '';
+        $this->resepsi_alamat = '';
+        $this->resepsi_link_maps = '';
     }
 }
