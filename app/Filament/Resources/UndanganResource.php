@@ -150,6 +150,25 @@ class UndanganResource extends Resource
                     ])
                     ->columns(2),
 
+                     Forms\Components\Section::make('Galeri Foto')
+                    ->schema([
+                        // Repeater = form yang bisa digandakan (tambah/hapus baris) oleh admin
+                        // relationship() bikin Repeater ini otomatis baca/simpan ke tabel undangan_fotos
+                        Forms\Components\Repeater::make('fotos')
+                            ->relationship() // pakai relasi fotos() yang udah ada di Model Undangan
+                            ->schema([
+                                Forms\Components\FileUpload::make('path')
+                                    ->image()
+                                    ->directory('galeri') // disimpan di storage/app/public/galeri
+                                    ->imagePreviewHeight('150')
+                                    ->required(),
+                            ])
+                            ->grid(3) // tampilkan 3 kolom biar gak kepanjangan ke bawah
+                            ->addActionLabel('Tambah Foto') // ganti label tombol tambah default
+                            ->reorderable(false) // matikan drag buat urutan dulu, biar sederhana
+                            ->columnSpanFull(),
+                    ]),
+
                 Forms\Components\Select::make('status')
                     ->options([
                         'draft' => 'Draft',
