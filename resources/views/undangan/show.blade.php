@@ -154,19 +154,77 @@
         @endif
 
 
-        {{-- section detail acara, id="detail" dipakai sebagai tujuan scroll tombol di atas --}}
+       {{-- section detail acara, id="detail" dipakai sebagai tujuan scroll tombol di atas --}}
         <div id="detail" class="max-w-md px-4 py-16 mx-auto text-center">
 
-            {{-- lokasi acara --}}
-            @if ($undangan->lokasi)
-                <div class="mt-8">
-                    <h2 class="font-semibold text-gray-900">Lokasi</h2>
-                    <p class="mt-1 text-gray-600">{{ $undangan->lokasi }}</p>
-                    @if ($undangan->alamat)
-                        <p class="text-sm text-gray-500">{{ $undangan->alamat }}</p>
+            <h2 class="mb-10 font-serif text-2xl font-bold text-gray-900">Acara</h2>
+
+            {{-- card Akad Nikah, cuma tampil kalau tanggal akad ada isinya --}}
+            @if ($undangan->akad_tanggal)
+                <div class="p-6 mb-8 border border-gray-200 rounded-2xl">
+                    <h3 class="font-semibold text-gray-900">Akad Nikah</h3>
+
+                    <p class="mt-2 text-gray-600">
+                        {{ \Carbon\Carbon::parse($undangan->akad_tanggal)->translatedFormat('l, d F Y') }}
+                    </p>
+
+                    {{-- tampilkan rentang jam mulai-selesai, cuma kalau ada isinya --}}
+                    @if ($undangan->akad_waktu_mulai)
+                        <p class="text-sm text-gray-500">
+                            {{ \Carbon\Carbon::parse($undangan->akad_waktu_mulai)->format('H:i') }}
+                            @if ($undangan->akad_waktu_selesai)
+                                - {{ \Carbon\Carbon::parse($undangan->akad_waktu_selesai)->format('H:i') }}
+                            @endif
+                            WIB
+                        </p>
                     @endif
-                    @if ($undangan->link_maps)
-                        <a href="{{ $undangan->link_maps }}" target="_blank"
+
+                    @if ($undangan->akad_lokasi)
+                        <p class="mt-3 font-medium text-gray-900">{{ $undangan->akad_lokasi }}</p>
+                    @endif
+
+                    @if ($undangan->akad_alamat)
+                        <p class="text-sm text-gray-500">{{ $undangan->akad_alamat }}</p>
+                    @endif
+
+                    @if ($undangan->akad_link_maps)
+                        <a href="{{ $undangan->akad_link_maps }}" target="_blank"
+                            class="inline-block px-4 py-2 mt-3 text-sm font-semibold text-gray-900 border border-gray-300 rounded-full hover:bg-gray-50">
+                            Lihat di Google Maps
+                        </a>
+                    @endif
+                </div>
+            @endif
+
+            {{-- card Resepsi, cuma tampil kalau tanggal resepsi ada isinya --}}
+            @if ($undangan->resepsi_tanggal)
+                <div class="p-6 mb-8 border border-gray-200 rounded-2xl">
+                    <h3 class="font-semibold text-gray-900">Resepsi</h3>
+
+                    <p class="mt-2 text-gray-600">
+                        {{ \Carbon\Carbon::parse($undangan->resepsi_tanggal)->translatedFormat('l, d F Y') }}
+                    </p>
+
+                    @if ($undangan->resepsi_waktu_mulai)
+                        <p class="text-sm text-gray-500">
+                            {{ \Carbon\Carbon::parse($undangan->resepsi_waktu_mulai)->format('H:i') }}
+                            @if ($undangan->resepsi_waktu_selesai)
+                                - {{ \Carbon\Carbon::parse($undangan->resepsi_waktu_selesai)->format('H:i') }}
+                            @endif
+                            WIB
+                        </p>
+                    @endif
+
+                    @if ($undangan->resepsi_lokasi)
+                        <p class="mt-3 font-medium text-gray-900">{{ $undangan->resepsi_lokasi }}</p>
+                    @endif
+
+                    @if ($undangan->resepsi_alamat)
+                        <p class="text-sm text-gray-500">{{ $undangan->resepsi_alamat }}</p>
+                    @endif
+
+                    @if ($undangan->resepsi_link_maps)
+                        <a href="{{ $undangan->resepsi_link_maps }}" target="_blank"
                             class="inline-block px-4 py-2 mt-3 text-sm font-semibold text-gray-900 border border-gray-300 rounded-full hover:bg-gray-50">
                             Lihat di Google Maps
                         </a>
