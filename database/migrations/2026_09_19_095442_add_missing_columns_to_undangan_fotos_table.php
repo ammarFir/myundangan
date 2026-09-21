@@ -20,11 +20,13 @@ return new class extends Migration
         });
     }
 
+
     public function down(): void
     {
         Schema::table('undangan_fotos', function (Blueprint $table) {
             $table->dropForeign(['undangan_id']); // hapus foreign key dulu sebelum hapus kolomnya
             $table->dropColumn(['undangan_id', 'path', 'urutan']);
+            //testing disini
         });
         //testing
     }
