@@ -2,6 +2,8 @@
 
 namespace App\Livewire;
 
+
+use App\Models\UndanganFoto;
 use App\Models\Undangan;
 use Illuminate\Support\Str;
 use Livewire\Component;
@@ -49,14 +51,19 @@ class UndanganDashboard extends Component
     public $akad_lokasi = '';
     public $akad_alamat = '';
     public $akad_link_maps = '';
-
-    // data acara Resepsi
+    
+    
+    // data acara Resepsif
     public $resepsi_tanggal = '';
     public $resepsi_waktu_mulai = '';
     public $resepsi_waktu_selesai = '';
     public $resepsi_lokasi = '';
     public $resepsi_alamat = '';
     public $resepsi_link_maps = '';
+
+    //tambahan property baru
+    public $fotos_baru = [];
+    public $existing_fotos = [];
 
     //aturan validasi tiap field , dipanggil pas simpan data
     protected function rules() {
@@ -90,6 +97,8 @@ class UndanganDashboard extends Component
             'resepsi_lokasi' => 'nullable|string|max:255',
             'resepsi_alamat' => 'nullable|string',
             'resepsi_link_maps' => 'nullable|url',
+            //pnambahan validasii
+            'fotos_baru.*' => 'nullable|image|max:2048',
         ];
     }
 
@@ -156,6 +165,10 @@ class UndanganDashboard extends Component
         $this->resepsi_alamat = $undangan->resepsi_alamat;
         $this->resepsi_link_maps = $undangan->resepsi_link_maps;
 
+        //ambil semua foto galeri milik undangan , urutkan by id
+        $this->existing_fotos = $undangan->fotos()->orderBy('urutan')->get();
+        $this->fotos_baru = [];
+
         $this->mode= 'form';
 
     }
@@ -214,7 +227,18 @@ class UndanganDashboard extends Component
 
             $data['slug'] = Str::slug($this->nama_pria . '-' . $this->nama_wanita) . '-' . uniqid();
             $data['status'] = 'draft';
+            $undangan = Undangan::create($data);
             Undangan::create($data);
+        }
+
+        //simpan tiap goto baru yg diupload ke tabel undangan foto
+
+        foreach ( $this->fotos_baru as $foto) {
+            UndanganFoto::create([
+                'undangan_id' => $undangan->id,
+                'path' => $foto->store('galeri', 'public'),
+                'urutan' => 0,
+            ]);
         }
 
         $this->resetForm();
@@ -227,6 +251,17 @@ class UndanganDashboard extends Component
         $this->resetForm();
         $this->mode = 'list';
     }
+
+    public function deleteFoto($fotoId)  {
+        UndanganFoto::where('id', $fotoId)->delete();
+      
+        
+        //refresh daftar exisitiong foto
+        $this->existing_fotos = UndanganFoto::where('undangan_id', $this->editingId)
+        ->orderBy('urutan')
+        ->get();
+    }
+
 
     public function delete($id) {
         //cari lalu hapus 

@@ -315,6 +315,50 @@
                 </div>
             </div>
 
+
+            {{-- SECTION GALERI FOTO --}}
+            <div class="pt-6 border-t border-gray-200">
+                <h3 class="mb-4 font-semibold text-gray-900">Galeri Foto</h3>
+
+                {{-- tampilkan foto-foto yang udah ada, dengan tombol hapus per foto --}}
+                @if (count($existing_fotos) > 0)
+                    <div class="grid grid-cols-3 gap-3 mb-4 md:grid-cols-4">
+                        @foreach ($existing_fotos as $foto)
+                            <div class="relative">
+                                <img src="{{ Storage::url($foto->path) }}"
+                                    class="object-cover w-full h-24 rounded-lg">
+                                {{-- wire:click.stop biar klik tombol ini gak ikut trigger event lain --}}
+                                <button type="button" wire:click.stop="deleteFoto({{ $foto->id }})"
+                                    wire:confirm="Hapus foto ini?"
+                                    class="absolute flex items-center justify-center w-6 h-6 text-xs text-white bg-red-600 rounded-full top-1 right-1 hover:bg-red-700">
+                                    &times;
+                                </button>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+
+                {{-- input file, "multiple" artinya user bisa pilih beberapa foto sekaligus --}}
+                <label class="block mb-1 text-sm font-medium text-gray-700">Tambah Foto Baru</label>
+                <input type="file" wire:model="fotos_baru" multiple accept="image/*"
+                    class="block text-sm text-gray-600">
+
+                <div wire:loading wire:target="fotos_baru" class="mt-1 text-xs text-gray-400">Mengunggah...</div>
+
+                @error('fotos_baru.*')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+
+                {{-- preview foto baru yang barusan dipilih, belum disimpan ke server --}}
+                @if (count($fotos_baru) > 0)
+                    <div class="grid grid-cols-3 gap-3 mt-3 md:grid-cols-4">
+                        @foreach ($fotos_baru as $foto)
+                            <img src="{{ $foto->temporaryUrl() }}" class="object-cover w-full h-24 rounded-lg">
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+
             <div class="flex items-center gap-3 pt-2">
                 <button type="submit"
                     class="px-6 py-3 text-sm font-semibold text-white bg-gray-900 rounded-full hover:bg-gray-700">

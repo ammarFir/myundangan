@@ -151,6 +151,23 @@
 
                 </div>
             </div>
+
+
+
+            
+        @endif
+                {{-- section galeri foto, cuma tampil kalau undangan punya minimal 1 foto --}}
+        @if ($undangan->fotos->count() > 0)
+            <div class="max-w-md px-4 py-16 mx-auto text-center border-t border-gray-100">
+                <h2 class="mb-10 font-serif text-2xl font-bold text-gray-900">Galeri</h2>
+
+                {{-- grid 2 kolom, foto diurutkan sesuai kolom urutan --}}
+                <div class="grid grid-cols-2 gap-3">
+                    @foreach ($undangan->fotos->sortBy('urutan') as $foto)
+                        <img src="{{ Storage::url($foto->path) }}" class="object-cover w-full h-40 rounded-lg">
+                    @endforeach
+                </div>
+            </div>
         @endif
 
 
