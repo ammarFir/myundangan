@@ -16,30 +16,61 @@
             <div class="py-16 text-center text-gray-500 border border-gray-300 border-dashed rounded-xl">
                 Kamu belum punya undangan. Yuk buat yang pertama!
             </div>
-        @else
+       @else
             <div class="space-y-4">
                 @foreach ($undangans as $undangan)
-                    <div class="flex items-center justify-between p-4 border border-gray-200 rounded-xl">
-                        <div>
-                            <p class="font-semibold text-gray-900">
-                                {{ $undangan->nama_pria }} & {{ $undangan->nama_wanita }}
-                            </p>
-                            <p class="text-sm text-gray-500">
-                                Status:
-                                <span class="font-medium">{{ ucfirst($undangan->status) }}</span>
-                            </p>
+                    <div class="border border-gray-200 rounded-xl">
+                        <div class="flex items-center justify-between p-4">
+                            <div>
+                                <p class="font-semibold text-gray-900">
+                                    {{ $undangan->nama_pria }} & {{ $undangan->nama_wanita }}
+                                </p>
+                                <p class="text-sm text-gray-500">
+                                    Status:
+                                    <span class="font-medium">{{ ucfirst($undangan->status) }}</span>
+                                </p>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                {{-- tombol baru, menampilkan jumlah tamu yang udah RSVP --}}
+                                <button wire:click="toggleRsvp({{ $undangan->id }})"
+                                    class="text-sm font-medium text-gray-700 hover:text-gray-900">
+                                    Lihat RSVP ({{ $undangan->tamus->count() }})
+                                </button>
+                                <button wire:click="edit({{ $undangan->id }})"
+                                    class="text-sm font-medium text-gray-700 hover:text-gray-900">
+                                    Edit
+                                </button>
+                                <button wire:click="delete({{ $undangan->id }})"
+                                    wire:confirm="Yakin mau hapus undangan ini?"
+                                    class="text-sm font-medium text-red-600 hover:text-red-800">
+                                    Hapus
+                                </button>
+                            </div>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <button wire:click="edit({{ $undangan->id }})"
-                                class="text-sm font-medium text-gray-700 hover:text-gray-900">
-                                Edit
-                            </button>
-                            <button wire:click="delete({{ $undangan->id }})"
-                                wire:confirm="Yakin mau hapus undangan ini?"
-                                class="text-sm font-medium text-red-600 hover:text-red-800">
-                                Hapus
-                            </button>
-                        </div>
+
+                        {{-- daftar RSVP, cuma tampil kalau undangan ini yang lagi dibuka --}}
+                        @if ($showRsvpFor === $undangan->id)
+                            <div class="p-4 border-t border-gray-100 bg-gray-50">
+                                @if ($undangan->tamus->isEmpty())
+                                    <p class="text-sm text-gray-500">Belum ada yang mengisi RSVP.</p>
+                                @else
+                                    <div class="space-y-2">
+                                        @foreach ($undangan->tamus as $tamu)
+                                            <div class="flex items-center justify-between text-sm">
+                                                <span class="text-gray-900">{{ $tamu->nama }}</span>
+                                                <span class="text-gray-500">
+                                                    {{-- str_replace bikin "tidak_hadir" jadi "tidak hadir" (lebih enak dibaca) --}}
+                                                    {{ ucfirst(str_replace('_', ' ', $tamu->kehadiran)) }}
+                                                    @if ($tamu->jumlah_orang)
+                                                        ({{ $tamu->jumlah_orang }} orang)
+                                                    @endif
+                                                </span>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @endif
+                            </div>
+                        @endif
                     </div>
                 @endforeach
             </div>

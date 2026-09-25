@@ -170,6 +170,7 @@
             </div>
         @endif
 
+        <livewire:rsvp-form :undanganId="$undangan->id" />
 
        {{-- section detail acara, id="detail" dipakai sebagai tujuan scroll tombol di atas --}}
         <div id="detail" class="max-w-md px-4 py-16 mx-auto text-center">

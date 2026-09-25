@@ -55,5 +55,11 @@ class Undangan extends Model
         return $this->hasMany(UndanganFoto::class);
     }
 
+      //relasi : 1 undangan bisa punya banyak tamu 
+    public function tamus () {
+        return $this->hasMany(Tamu::class);
+        //$this mengacu ke undangan 
+        // object this (undangan ) punya banyak tamu
+    }
 
 }

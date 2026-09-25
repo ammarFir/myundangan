@@ -64,6 +64,7 @@ class UndanganDashboard extends Component
     //tambahan property baru
     public $fotos_baru = [];
     public $existing_fotos = [];
+    public $showRsvpFor = null;  // menyimpan ID undangan yang lagi dibuka daftar RSVP-nya, null kalau gak ada yang dibuka
 
     //aturan validasi tiap field , dipanggil pas simpan data
     protected function rules() {
@@ -102,11 +103,12 @@ class UndanganDashboard extends Component
         ];
     }
 
-//dipanggil saat tiap kali komponen dimuat
+    //dipanggil saat tiap kali komponen dimuat
     public function render()
     {
         //ambil by user id , jadi yg tampil c uma undangan milik dia sendiri
         $undangans = Undangan::where('user_id', auth()->id())
+        ->with('tamus')
         ->latest()
         ->get();
 
@@ -116,7 +118,7 @@ class UndanganDashboard extends Component
     }
 
     //dipanggil ketika tombol buat undangan diclick
-    public function create(){
+    public function create(){   
         $this->resetForm();
         //kosongkan semua field
         $this->mode = 'form';
@@ -250,6 +252,10 @@ class UndanganDashboard extends Component
     public function cancel () {
         $this->resetForm();
         $this->mode = 'list';
+    }
+
+    public function toggleRsvp($id) {
+        $this->showRsvpFor = $this->showRsvpFor === $id ? null : $id;
     }
 
     public function deleteFoto($fotoId)  {
