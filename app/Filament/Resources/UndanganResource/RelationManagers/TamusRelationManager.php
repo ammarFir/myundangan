@@ -21,6 +21,20 @@ class TamusRelationManager extends RelationManager
                 Forms\Components\TextInput::make('nama')
                     ->required()
                     ->maxLength(255),
+
+                Forms\Components\Select::make('kehadiran')
+                ->options([
+                    'hadir' => 'Hadir',
+                    'tidak_hadir' => 'Tidak Hadir',
+                    'ragu_ragu' => 'Ragu-ragu',
+                ]),
+
+                Forms\Components\TextInput::make('jumlah_orang')
+                ->numeric(), //cuma nerima angka
+
+                Forms\Components\Textarea::make('pesan')
+                ->label('Ucapan/Pesan')
+                ->columnSpanFull(),
             ]);
     }
 
@@ -29,10 +43,37 @@ class TamusRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('nama')
             ->columns([
-                Tables\Columns\TextColumn::make('nama'),
+                Tables\Columns\TextColumn::make('nama')
+                ->searchable(),
+
+                //badge biar kellihatan warna beda tiap status kehadiran
+                Tables\Columns\BadgeColumn::make('kehadiran')
+                ->colors([
+                    'success' => 'hadir',
+                    'danger' => 'tidak_hadir',
+                    'warning' => 'ragu_ragu'
+                ]),
+
+                Tables\Columns\TextColumn::make('jumlah_orang')
+                ->label('Jumlah'),
+
+
+                Tables\Columns\TextColumn::make('pesan')
+                ->label('Ucapan')
+                ->limit(50),
+
+                Tables\Columns\TextColumn::make('created_at')
+                ->label('Waktu')
+                ->dateTime()
+                ->sortable(),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('kehadiran')
+                ->options([
+                    'hadir' => 'Hadir',
+                    'tidak_hadir' => 'Tidak Hadir',
+                    'ragu_ragu' => 'Ragu-ragu',
+                ]),
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make(),
