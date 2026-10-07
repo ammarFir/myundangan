@@ -13,14 +13,19 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use PhpParser\Node\Stmt\Label;
+
+use function PHPUnit\Framework\directoryExists;
 
 class UndanganResource extends Resource
 {
     protected static ?string $model = Undangan::class;
+    //file UndanganResource ini mengurus data dari model undangan
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
+    //fungsi ini  untuk isi /edit data undangan
     {
         return $form
             ->schema([
@@ -48,7 +53,7 @@ class UndanganResource extends Resource
 
 
 
-                                    Forms\Components\Section::make('Akad Nikah')
+                Forms\Components\Section::make('Akad Nikah')
                     ->schema([
                         Forms\Components\DatePicker::make('akad_tanggal'),
                         Forms\Components\TimePicker::make('akad_waktu_mulai'),
@@ -170,6 +175,30 @@ class UndanganResource extends Resource
                             ->columnSpanFull(),
                     ]),
 
+                    Forms\Components\Section::make('Kado')
+                    ->schema([
+                        Forms\Components\TextInput::make('rekening_bank')
+                        ->label('Nama Bank')
+                        ->placeholder('Contoh: BCA')
+                        ->maxLength(255),
+
+                        Forms\Components\TextInput::make('rekening_nomor')
+                        ->label('Nomor Rekening')
+                        ->maxLength(255),
+
+                        
+                        Forms\Components\TextInput::make('rekening_nama')
+                        ->label('Nama Pemilik Rekening')
+                        ->maxLength(255),
+
+                        Forms\Components\FileUpload::make('qris_gambar')
+                        ->label('Gambar QRIS')
+                        ->image()
+                        ->directory('kado')
+                        ->imagePreviewHeight('150'),
+                    ])
+                    ->columns(3),
+
                 Forms\Components\Select::make('status')
                     ->options([
                         'draft' => 'Draft',
@@ -181,6 +210,7 @@ class UndanganResource extends Resource
     }
 
     public static function table(Table $table): Table
+    //fungsi ini mengatur table daftar undangan di halaman admin
     {
         return $table
             ->columns([
@@ -234,6 +264,7 @@ class UndanganResource extends Resource
         return [
             //mendaftarkan relation manager
             RelationManagers\TamusRelationManager::class,
+            //mendaftarkan relation manager yg berkaitan dengan undangan 
         ];
     }
 
@@ -246,3 +277,18 @@ class UndanganResource extends Resource
         ];
     }
 }
+
+//              UndanganResource//                     │
+//      ┌─────────────┼─────────────┐
+//      ↓             ↓             ↓
+//    form()       table()     getRelations()
+//      │             │             │
+//      ↓             ↓             ↓
+//   input/edit      list         Tamu/foto
+//                     │
+//                     ↓
+//                 getPages()
+//                     │
+//          ┌──────────┼─────────┐
+//          ↓          ↓         ↓
+//        List       Create     Edit

@@ -5,9 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+//file yg mewakili data undangan di database
+//db 
+// |
+// table undangans
+// |
+// Model undangan.php
+// |
+// dipakai controller / livewire / kode laravel lainnya
 class Undangan extends Model
 {
     use HasFactory;
+    //fillable artinya kolom2 yg boleh diisi dengan menggunakan mass assignment
      protected $fillable = [
         'user_id',
         'slug',
@@ -42,6 +51,10 @@ class Undangan extends Model
         'resepsi_lokasi',
         'resepsi_alamat',
         'resepsi_link_maps',
+        'rekening_bank',
+        'rekening_nomor',
+        'rekening_nama',
+        'qris_gambar',
     ];
 
     public function user(){
