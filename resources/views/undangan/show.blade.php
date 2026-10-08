@@ -172,6 +172,64 @@
 
         <livewire:rsvp-form :undanganId="$undangan->id" />
 
+                    {{-- section kado, cuma tampil kalau ada data rekening atau QRIS --}}
+        @if ($undangan->rekening_nomor || $undangan->qris_gambar)
+            <div class="max-w-md px-4 py-16 mx-auto text-center border-t border-gray-100">
+                <h2 class="mb-2 font-serif text-2xl font-bold text-gray-900">Kado</h2>
+                <p class="mb-8 text-sm text-gray-500">Doa restu Anda adalah hadiah terbaik. Namun bila ingin memberi tanda kasih, dapat melalui:</p>
+
+                {{-- kartu rekening bank --}}
+                @if ($undangan->rekening_nomor)
+                    {{-- x-data bikin variabel 'copied' buat nampilin feedback setelah tombol Salin diklik --}}
+                                                          <div class="p-6 mb-6 border border-gray-200 rounded-2xl" x-data="{
+                        copied: false,
+                        salin(teks) {
+                            // cara modern, cuma jalan di HTTPS atau localhost
+                            if (navigator.clipboard && window.isSecureContext) {
+                                navigator.clipboard.writeText(teks);
+                            } else {
+                                // cara cadangan: bikin textarea sementara, pilih isinya, lalu copy
+                                const el = document.createElement('textarea');
+                                el.value = teks;
+                                document.body.appendChild(el);
+                                el.select();
+                                document.execCommand('copy');
+                                document.body.removeChild(el);
+                            }
+                            this.copied = true; // tampilkan tulisan 'Tersalin!'
+                            setTimeout(() => this.copied = false, 2000); // balik normal setelah 2 detik
+                        }
+                    }">
+                        @if ($undangan->rekening_bank)
+                            <p class="text-sm font-semibold text-gray-900">{{ $undangan->rekening_bank }}</p>
+                        @endif
+
+                        <p class="mt-2 font-mono text-lg tracking-wider text-gray-900">{{ $undangan->rekening_nomor }}</p>
+
+                        @if ($undangan->rekening_nama)
+                            <p class="mt-1 text-sm text-gray-500">a.n. {{ $undangan->rekening_nama }}</p>
+                        @endif
+
+                        {{-- navigator.clipboard.writeText nyalin nomor rekening ke clipboard --}}
+                        <button type="button"
+                                                        @click="salin('{{ $undangan->rekening_nomor }}')"
+                            class="px-4 py-2 mt-4 text-sm font-semibold text-gray-900 border border-gray-300 rounded-full hover:bg-gray-50">
+                            <span x-show="!copied">Salin Nomor Rekening</span>
+                            <span x-show="copied">Tersalin!</span>
+                        </button>
+                    </div>
+                @endif
+
+                {{-- kartu QRIS --}}
+                @if ($undangan->qris_gambar)
+                    <div class="p-6 border border-gray-200 rounded-2xl">
+                        <p class="mb-4 text-sm font-semibold text-gray-900">QRIS</p>
+                        <img src="{{ Storage::url($undangan->qris_gambar) }}" class="object-contain w-48 h-48 mx-auto">
+                    </div>
+                @endif
+            </div>
+        @endif 
+
         <livewire:ucapan-form :undanganId="$undangan->id" />
 
        {{-- section detail acara, id="detail" dipakai sebagai tujuan scroll tombol di atas --}}

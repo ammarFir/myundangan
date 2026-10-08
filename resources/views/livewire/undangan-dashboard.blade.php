@@ -390,6 +390,54 @@
                 @endif
             </div>
 
+                        {{-- SECTION KADO --}}
+            <div class="pt-6 border-t border-gray-200">
+                <h3 class="mb-4 font-semibold text-gray-900">Kado (Rekening & QRIS)</h3>
+
+                <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Nama Bank</label>
+                        <input type="text" wire:model="rekening_bank" placeholder="Contoh: BCA"
+                            class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900">
+                    </div>
+
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Nomor Rekening</label>
+                        <input type="text" wire:model="rekening_nomor"
+                            class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900">
+                    </div>
+
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-gray-700">Nama Pemilik Rekening</label>
+                        <input type="text" wire:model="rekening_nama"
+                            class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900">
+                    </div>
+                </div>
+
+                <div class="mt-5">
+                    <label class="block mb-1 text-sm font-medium text-gray-700">Gambar QRIS</label>
+
+                    {{-- preview QRIS lama, tampil kalau ada dan belum pilih file baru --}}
+                    @if ($qris_gambar_lama && !$qris_gambar)
+                        <img src="{{ Storage::url($qris_gambar_lama) }}" class="object-cover w-24 h-24 mb-2 rounded-lg">
+                    @endif
+
+                    {{-- preview file QRIS yang baru dipilih (belum disimpan ke server) --}}
+                    @if ($qris_gambar)
+                        <img src="{{ $qris_gambar->temporaryUrl() }}" class="object-cover w-24 h-24 mb-2 rounded-lg">
+                    @endif
+
+                    <input type="file" wire:model="qris_gambar" accept="image/png,image/jpeg"
+                        class="block text-sm text-gray-600">
+
+                    <div wire:loading wire:target="qris_gambar" class="mt-1 text-xs text-gray-400">Mengunggah...</div>
+
+                    @error('qris_gambar')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+
             <div class="flex items-center gap-3 pt-2">
                 <button type="submit"
                     class="px-6 py-3 text-sm font-semibold text-white bg-gray-900 rounded-full hover:bg-gray-700">

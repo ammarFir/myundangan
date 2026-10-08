@@ -8,7 +8,7 @@ use App\Models\Undangan;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithFileUploads; // trait wajib biar Livewire bisa handle upload file
-//pengaktifan kemampuan upload file di livewire
+//pengaktifan kemampuan upload file di livewire 
 class UndanganDashboard extends Component
 {
     use WithFileUploads; // aktifkan fitur upload file di komponen ini
@@ -19,6 +19,7 @@ class UndanganDashboard extends Component
     //menyimpan id undangan yg lagi di edit , defaultnya null
     public $editingId = null;
 
+    //data2 / property yg dimiliki komponen
     //deklare field form 
     public $nama_pria = '';
     public $nama_wanita = '';
@@ -110,7 +111,7 @@ class UndanganDashboard extends Component
             'rekening_bank' => 'nullable|string|max:255',
             'rekening_nomor' => 'nullable|string|max:255',
             'rekening_nama' => 'nullable|string|max:255',
-            'qris_gambar' => 'nullable|image|max:1024',
+            'qris_gambar' => 'nullable|image|max:2048   ',
             //pnambahan validasii
             'fotos_baru.*' => 'nullable|image|max:2048',
         ];
@@ -184,7 +185,7 @@ class UndanganDashboard extends Component
         $this->rekening_bank = $undangan->rekening_bank;
         $this->rekening_nomor = $undangan->rekening_nomor;
         $this->rekening_nama = $undangan->rekening_nama;
-        $this->qris_gambar_lama = $undangan->qris_gambar_lama;
+        $this->qris_gambar_lama = $undangan->qris_gambar;
         $this->qris_gambar = null ;
 
 
@@ -347,3 +348,17 @@ class UndanganDashboard extends Component
         $this->existing_fotos = [];
     }
 }
+
+//              UndanganDashboard
+//                     │
+//       ┌─────────────┼─────────────┐
+//       ↓             ↓             ↓
+//    TAMPIL          INPUT         AKSI
+//       │             │             │
+//    render()       property     create()
+//                                  edit()
+//                                  save()
+//                                  delete()
+//                                  cancel()
+//                                  dll
+//UndanganDashboard.php adalah logic interaksi user terhadap data
