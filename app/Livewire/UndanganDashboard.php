@@ -8,7 +8,7 @@ use App\Models\Undangan;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithFileUploads; // trait wajib biar Livewire bisa handle upload file
-
+//pengaktifan kemampuan upload file di livewire
 class UndanganDashboard extends Component
 {
     use WithFileUploads; // aktifkan fitur upload file di komponen ini
@@ -61,6 +61,13 @@ class UndanganDashboard extends Component
     public $resepsi_alamat = '';
     public $resepsi_link_maps = '';
 
+    //data kado
+    public $rekening_bank = '';
+    public $rekening_nomor = '';
+    public $rekening_nama = '';
+    public $qris_gambar = null;
+    public $qris_gambar_lama = null;
+
     //tambahan property baru
     public $fotos_baru = [];
     public $existing_fotos = [];
@@ -98,6 +105,12 @@ class UndanganDashboard extends Component
             'resepsi_lokasi' => 'nullable|string|max:255',
             'resepsi_alamat' => 'nullable|string',
             'resepsi_link_maps' => 'nullable|url',
+
+            //penambahan data rekening
+            'rekening_bank' => 'nullable|string|max:255',
+            'rekening_nomor' => 'nullable|string|max:255',
+            'rekening_nama' => 'nullable|string|max:255',
+            'qris_gambar' => 'nullable|image|max:1024',
             //pnambahan validasii
             'fotos_baru.*' => 'nullable|image|max:2048',
         ];
@@ -153,6 +166,7 @@ class UndanganDashboard extends Component
         $this->instagram_wanita = $undangan->instagram_wanita;
         $this->foto_wanita_lama = $undangan->foto_wanita;
         $this->foto_wanita = null;
+
         $this->akad_tanggal = $undangan->akad_tanggal;
         $this->akad_waktu_mulai = $undangan->akad_waktu_mulai ? substr($undangan->akad_waktu_mulai, 0, 5) : '';
         $this->akad_waktu_selesai = $undangan->akad_waktu_selesai ? substr($undangan->akad_waktu_selesai, 0, 5) : '';
@@ -167,6 +181,14 @@ class UndanganDashboard extends Component
         $this->resepsi_alamat = $undangan->resepsi_alamat;
         $this->resepsi_link_maps = $undangan->resepsi_link_maps;
 
+        $this->rekening_bank = $undangan->rekening_bank;
+        $this->rekening_nomor = $undangan->rekening_nomor;
+        $this->rekening_nama = $undangan->rekening_nama;
+        $this->qris_gambar_lama = $undangan->qris_gambar_lama;
+        $this->qris_gambar = null ;
+
+
+ 
         //ambil semua foto galeri milik undangan , urutkan by id
         $this->existing_fotos = $undangan->fotos()->orderBy('urutan')->get();
         $this->fotos_baru = [];
@@ -208,6 +230,9 @@ class UndanganDashboard extends Component
             'resepsi_lokasi' => $this->resepsi_lokasi,
             'resepsi_alamat' => $this->resepsi_alamat,
             'resepsi_link_maps' => $this->resepsi_link_maps,
+            'rekening_bank' => $this->rekening_bank,
+            'rekening_nomor' => $this->rekening_nomor,
+            'rekening_nama' => $this->rekening_nama,
         ];
 
         // kalau user upload foto baru, simpan file-nya dan catat path-nya
@@ -217,6 +242,11 @@ class UndanganDashboard extends Component
         }
         if ($this->foto_wanita) {
             $data['foto_wanita'] = $this->foto_wanita->store('mempelai', 'public');
+        }
+
+        if($this->qris_gambar) {
+            $data['qris_gambar'] = $this->qris_gambar->store('kado', 'public');
+            //simpan ke storage app/public/kado
         }
 
         if ($this->editingId){
@@ -230,7 +260,7 @@ class UndanganDashboard extends Component
             $data['slug'] = Str::slug($this->nama_pria . '-' . $this->nama_wanita) . '-' . uniqid();
             $data['status'] = 'draft';
             $undangan = Undangan::create($data);
-            Undangan::create($data);
+            
         }
 
         //simpan tiap goto baru yg diupload ke tabel undangan foto
@@ -308,5 +338,12 @@ class UndanganDashboard extends Component
         $this->resepsi_lokasi = '';
         $this->resepsi_alamat = '';
         $this->resepsi_link_maps = '';
+        $this->rekening_bank = '';
+        $this->rekening_nomor = '';
+        $this->rekening_nama = '';
+        $this->qris_gambar = null;
+        $this->qris_gambar_lama = null;
+        $this->fotos_baru = [];
+        $this->existing_fotos = [];
     }
 }
