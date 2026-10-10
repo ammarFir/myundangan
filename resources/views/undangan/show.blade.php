@@ -44,7 +44,7 @@
                      1. ubah 'open' jadi true (bikin cover fade out & scroll ke-unlock)
                      2. scroll halaman ke section #detail --}}
                 <button type="button"
-                    @click="open = true; $nextTick(() => document.getElementById('detail').scrollIntoView({ behavior: 'smooth' }))"
+                    @click="open = true; $nextTick(() => document.getElementById('mulai').scrollIntoView({ behavior: 'smooth' }))"
                     class="inline-block px-8 py-3 mt-10 text-sm font-semibold text-white transition border border-white rounded-full hover:bg-white hover:text-gray-900">
                     Buka Undangan
                 </button>
@@ -60,8 +60,43 @@
             </div>
         </div>
 
-        {{-- spacer setinggi 1 layar, biar pas cover di-fade-out, halaman gak "loncat" tiba-tiba ke section ayat --}}
-        <div class="min-h-screen bg-gray-900"></div>
+                {{-- HERO: isinya sama kayak cover, tapi ini bagian dari halaman biasa (bukan overlay),
+             jadi tetap ada pas user scroll balik ke atas setelah undangan dibuka --}}
+        <div class="flex items-center justify-center min-h-screen px-4 bg-gray-900">
+            <div class="w-full max-w-md py-20 text-center text-white">
+
+                {{-- label kecil di atas nama --}}
+                <p class="text-sm tracking-widest text-gray-400 uppercase">
+                    The Wedding Of
+                </p>
+
+                {{-- nama pasangan --}}
+                <h1 class="mt-4 font-serif text-5xl font-bold">
+                    {{ $undangan->nama_pria }}
+                    <span class="block my-2 text-2xl font-normal">&</span>
+                    {{ $undangan->nama_wanita }}
+                </h1>
+
+                {{-- tanggal akad, cuma tampil kalau ada isinya --}}
+                @if ($undangan->akad_tanggal)
+                    <p class="mt-6 text-gray-300">
+                        {{ \Carbon\Carbon::parse($undangan->akad_tanggal)->translatedFormat('l, d F Y') }}
+                    </p>
+                @endif
+
+                {{-- nama tamu dari URL (?to=...), cuma tampil kalau ada --}}
+                @if (request()->query('to'))
+                    <div class="mt-10 text-sm text-gray-400">
+                        <p>Kepada Yth.</p>
+                        <p class="mt-1 text-lg font-semibold text-white">{{ e(request()->query('to')) }}</p>
+                    </div>
+                @endif
+
+            </div>
+        </div>
+
+        {{-- penanda titik tujuan tombol "Buka Undangan", letaknya tepat setelah hero (awal section ayat dst) --}}
+        <div id="mulai"></div>
 
         {{-- section ayat/kutipan, cuma tampil kalau field ayat_teks ada isinya --}}
         @if ($undangan->ayat_teks)
@@ -331,6 +366,33 @@
                 </a>
             </div>
         @endif
+
+
+
+                {{-- FOOTER undangan: kalimat penutup + nama pasangan + credit --}}
+        <div class="px-4 py-16 text-center text-white bg-gray-900">
+            {{-- kalimat penutup, max-w-md biar teks gak melebar --}}
+            <p class="max-w-md mx-auto text-sm leading-relaxed text-gray-300">
+                Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir
+                dan memberikan doa restu.
+            </p>
+
+            {{-- ucapan terima kasih --}}
+            <p class="mt-8 text-xs tracking-widest text-gray-400 uppercase">Kami yang berbahagia</p>
+
+            {{-- nama pasangan, pakai font serif biar senada dengan cover --}}
+            <h2 class="mt-3 font-serif text-3xl font-bold">
+                {{ $undangan->nama_pria }} & {{ $undangan->nama_wanita }}
+            </h2>
+
+            {{-- garis pemisah tipis --}}
+            <div class="w-16 mx-auto mt-10 border-t border-gray-700"></div>
+
+            {{-- credit, ganti "Undanganku" kalau nama platformnya nanti beda --}}
+            <p class="mt-6 text-xs text-gray-500">
+                Dibuat dengan Undanganku
+            </p>
+        </div>
 
     </div>
 
