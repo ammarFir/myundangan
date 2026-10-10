@@ -34,9 +34,9 @@
                 </h1>
 
                 {{-- tanggal acara, cuma tampil kalau ada isinya --}}
-                @if ($undangan->tanggal_acara)
+                               @if ($undangan->akad_tanggal)
                     <p class="mt-6 text-gray-300">
-                        {{ \Carbon\Carbon::parse($undangan->tanggal_acara)->translatedFormat('l, d F Y') }}
+                        {{ \Carbon\Carbon::parse($undangan->akad_tanggal)->translatedFormat('l, d F Y') }}
                     </p>
                 @endif
 
@@ -311,16 +311,26 @@
             @endif
 
             {{-- link live streaming, kalau ada --}}
-            @if ($undangan->link_streaming)
-                <div class="mt-8">
-                    <a href="{{ $undangan->link_streaming }}" target="_blank"
-                        class="inline-block px-6 py-3 text-sm font-semibold text-white bg-gray-900 rounded-full hover:bg-gray-700">
-                        Tonton Live Streaming
-                    </a>
-                </div>
-            @endif
+           
 
         </div>
+
+
+
+                {{-- section live streaming, cuma tampil kalau link-nya diisi --}}
+        @if ($undangan->link_streaming)
+            <div class="max-w-md px-4 py-16 mx-auto text-center border-t border-gray-100">
+                <h2 class="mb-2 font-serif text-2xl font-bold text-gray-900">Live Streaming</h2>
+                <p class="mb-6 text-sm text-gray-500">
+                    Bagi keluarga dan sahabat yang berhalangan hadir, silakan saksikan acara kami secara langsung melalui tautan berikut.
+                </p>
+
+                <a href="{{ $undangan->link_streaming }}" target="_blank" rel="noopener"
+                    class="inline-block px-6 py-3 text-sm font-semibold text-white bg-gray-900 rounded-full hover:bg-gray-700">
+                    Tonton Live Streaming
+                </a>
+            </div>
+        @endif
 
     </div>
 

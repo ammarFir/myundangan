@@ -26,7 +26,7 @@ return new class extends Migration
      */
     public function down(): void
     //down : membatalkan perubahan
-    //tapi dijalkankan saat php artisan migrate
+    //tapi dijalkankan saat php artisan migrate 
 
     {
         Schema::table('undangans', function (Blueprint $table) {
