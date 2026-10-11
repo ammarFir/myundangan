@@ -8,7 +8,12 @@
     {{-- x-data mendefinisikan variabel 'open' (status cover sudah dibuka atau belum)
          x-init dijalankan sekali saat halaman dimuat, langsung kunci scroll body
          x-effect dijalankan setiap kali 'open' berubah, buka kunci scroll kalau sudah true --}}
-    <div x-data="{ open: false }" x-init="document.body.style.overflow = 'hidden'"
+      {{-- x-init sekarang ngelakuin 3 hal pas halaman dimuat:
+         1. history.scrollRestoration = 'manual' : matiin fitur browser yang nginget posisi scroll terakhir
+         2. window.scrollTo(0, 0) : paksa halaman mulai dari paling atas
+         3. document.body.style.overflow = 'hidden' : kunci scroll sampai undangan dibuka --}}
+    <div x-data="{ open: false }"
+        x-init="history.scrollRestoration = 'manual'; window.scrollTo(0, 0); document.body.style.overflow = 'hidden'"
         x-effect="document.body.style.overflow = open ? 'auto' : 'hidden'">
 
         {{-- COVER: nutup seluruh layar (fixed inset-0), z-50 biar selalu di paling depan --}}
@@ -366,6 +371,39 @@
                 </a>
             </div>
         @endif
+
+                {{-- section protokol kesehatan, teks statis (sama untuk semua undangan) --}}
+        <div class="max-w-md px-4 py-16 mx-auto text-center border-t border-gray-100">
+            <h2 class="mb-2 font-serif text-2xl font-bold text-gray-900">Protokol Kesehatan</h2>
+            <p class="mb-8 text-sm text-gray-500">
+                Demi kenyamanan bersama, mohon perhatikan hal-hal berikut saat menghadiri acara.
+            </p>
+
+            {{-- daftar protokol, dibuat lewat array biar gampang nambah/ubah item --}}
+            @php
+                $protokol = [
+                    'Gunakan masker bila sedang kurang sehat',
+                    'Cuci tangan atau gunakan hand sanitizer',
+                    'Jaga jarak dan hindari kerumunan',
+                    'Tetap di rumah bila sedang sakit',
+                ];
+            @endphp
+
+            {{-- grid 2 kolom, tiap item berupa kartu kecil --}}
+            <div class="grid grid-cols-2 gap-3">
+                @foreach ($protokol as $item)
+                    <div class="flex flex-col items-center p-4 border border-gray-200 rounded-xl">
+                        {{-- ikon centang bulat, sebagai penanda tiap poin --}}
+                        <div class="flex items-center justify-center w-10 h-10 mb-3 text-white bg-gray-900 rounded-full">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                        </div>
+                        <p class="text-xs leading-relaxed text-gray-600">{{ $item }}</p>
+                    </div>
+                @endforeach
+            </div>
+        </div>
 
 
 
