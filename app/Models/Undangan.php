@@ -75,4 +75,9 @@ class Undangan extends Model
         // object this (undangan ) punya banyak tamu
     }
 
+    public function loveStories(){
+        return $this->hasMany(LoveStory::class)->orderBy('urutan');
+    }
+
+
 }

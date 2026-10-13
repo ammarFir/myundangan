@@ -199,6 +199,38 @@ class UndanganResource extends Resource
                     ])
                     ->columns(3),
 
+
+                Forms\Components\Section::make('Love Story')
+                    ->schema([
+                        //repeater nyimpen tiap momen ke table love storie lewat relationship
+                        Forms\Components\Repeater::make('lovestories')
+                        ->relationship()
+                        ->schema([
+                            Forms\Components\TextInput::make('judul')
+                            ->required()
+                            ->placeholder('Contoh: Pertemuan Pertama')
+                            ->maxLength(255),
+
+                            Forms\Components\TextInput::make('waktu')
+                            ->placeholder('Contoh: Agustus 2021')
+                            ->maxLength(255),
+
+                            Forms\Components\Textarea::make('cerita')
+                            ->rows(3)
+                            ->columnSpanFull(),
+
+                            Forms\Components\FileUpload::make('foto')
+                            ->image()
+                            ->directory('lovestory')
+                            ->imagePreviewHeight('120')
+                            ->columnSpanFull(),
+                        ])
+                        ->columns(2)
+                        ->orderColumn('urutan')
+                        ->addActionLabel('Tambah Momen')
+                        ->columnSpanFull()
+                    ]),
+
                 Forms\Components\Select::make('status')
                     ->options([
                         'draft' => 'Draft',

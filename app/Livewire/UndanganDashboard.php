@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 
-
+use App\Models\LoveStory;
 use App\Models\UndanganFoto;
 use App\Models\Undangan;
 use Illuminate\Support\Str;
@@ -72,7 +72,16 @@ class UndanganDashboard extends Component
     //tambahan property baru
     public $fotos_baru = [];
     public $existing_fotos = [];
-    public $showRsvpFor = null;  // menyimpan ID undangan yang lagi dibuka daftar RSVP-nya, null kalau gak ada yang dibuka
+    public $showRsvpFor = null; 
+     // menyimpan ID undangan yang lagi dibuka daftar RSVP-nya, null kalau gak ada yang dibuka
+
+    public $ls_judul = '';
+    public $ls_waktu = '';
+    public $ls_cerita = '';
+    public $ls_foto = null;
+    public $existing_stories = [];
+
+
 
     //aturan validasi tiap field , dipanggil pas simpan data
     protected function rules() {
@@ -114,6 +123,11 @@ class UndanganDashboard extends Component
             'qris_gambar' => 'nullable|image|max:2048   ',
             //pnambahan validasii
             'fotos_baru.*' => 'nullable|image|max:2048',
+
+            'ls_judul' => 'nullable|string|max:255',
+            'ls_waktu' => 'nullable|string|max:255',
+            'ls_cerita' => 'nullable|string',
+            'ls_foto' => 'nullable|image|max:2048',
         ];
     }
 
@@ -193,6 +207,8 @@ class UndanganDashboard extends Component
         //ambil semua foto galeri milik undangan , urutkan by id
         $this->existing_fotos = $undangan->fotos()->orderBy('urutan')->get();
         $this->fotos_baru = [];
+
+        $this->existing_stories = $undangan->loveStories()->get();
 
         $this->mode= 'form';
 
@@ -299,6 +315,41 @@ class UndanganDashboard extends Component
         ->get();
     }
 
+
+    public function tambahMomen () {
+        //aturan khusus form 
+        $this->validate([
+            'ls_judul' => 'required|string|max:255',
+            'ls_waktu' => 'nullable|string|max:255',
+            'ls_cerita' => 'nullable|string',
+            'ls_foto' => 'nullable|image|max:2048',
+        ]);
+
+        //foto cuma disimpan klo user milih file
+        $path = $this->ls_foto ? $this->ls_foto->store('lovestory', 'public') : null;
+
+        LoveStory::create([
+            'undangan_id' => $this->editingId,
+            'judul' => $this->ls_judul,
+            'waktu' => $this->ls_waktu,
+            'cerita' => $this->ls_cerita,
+            'foto' => $path,
+            'urutan' => LoveStory::where('undangan_id', $this->editingId)->count(),
+        ]);
+
+        //kosongkan form
+        $this->reset(['ls_judul', 'ls_waktu', 'ls_cerita', 'ls_foto']);
+
+        //refresh daftar momen supaya yg ditambah langsung muncul
+        $this->existing_stories = LoveStory::where('undangan_id', $this->editingId)->orderBy('urutan')->get();
+    }
+
+
+    public function hapusMomen($id) {
+        LoveStory::where('id', $id)->where('undangan_id', $this->editingId)->delete();
+
+        $this->existing_stories = LoveStory::where('undangan_id', $this->editingId)->orderBy('urutan')->get();
+    }
 
     public function delete($id) {
         //cari lalu hapus 
