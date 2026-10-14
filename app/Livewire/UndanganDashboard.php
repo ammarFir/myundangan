@@ -208,6 +208,7 @@ class UndanganDashboard extends Component
         $this->existing_fotos = $undangan->fotos()->orderBy('urutan')->get();
         $this->fotos_baru = [];
 
+        //ambi lsemua momen love story milik uundangan , lalu urutukan
         $this->existing_stories = $undangan->loveStories()->get();
 
         $this->mode= 'form';
@@ -397,6 +398,9 @@ class UndanganDashboard extends Component
         $this->qris_gambar_lama = null;
         $this->fotos_baru = [];
         $this->existing_fotos = [];
+
+        $this->reset(['ls_judul', 'ls_waktu', 'ls_cerita', 'ls_foto']);
+        $this->existing_fotos = []; //kosongkan daftar momen
     }
 }
 

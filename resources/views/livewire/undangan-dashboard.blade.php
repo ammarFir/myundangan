@@ -438,6 +438,106 @@
                 </div>
             </div>
 
+                        {{-- SECTION LOVE STORY --}}
+            <div class="pt-6 border-t border-gray-200">
+                <h3 class="mb-4 font-semibold text-gray-900">Love Story</h3>
+
+                {{-- form mini butuh editingId (undangan harus udah tersimpan dulu), jadi saat bikin baru cuma tampil keterangan --}}
+                @if (!$editingId)
+                    <p class="text-sm text-gray-500">
+                        Simpan undangan ini dulu, setelah itu klik Edit untuk menambahkan momen Love Story.
+                    </p>
+                @else
+
+                    {{-- daftar momen yang udah tersimpan, tiap momen ada tombol hapus --}}
+                    @if (count($existing_stories) > 0)
+                        <div class="mb-5 space-y-3">
+                            @foreach ($existing_stories as $momen)
+                                <div class="flex items-start gap-3 p-3 border border-gray-200 rounded-lg">
+                                    {{-- foto momen, cuma tampil kalau ada --}}
+                                    @if ($momen->foto)
+                                        <img src="{{ Storage::url($momen->foto) }}"
+                                            class="object-cover w-16 h-16 rounded-lg shrink-0">
+                                    @endif
+
+                                    <div class="flex-1">
+                                        <p class="font-medium text-gray-900">{{ $momen->judul }}</p>
+                                        @if ($momen->waktu)
+                                            <p class="text-xs text-gray-500">{{ $momen->waktu }}</p>
+                                        @endif
+                                        @if ($momen->cerita)
+                                            <p class="mt-1 text-sm text-gray-600">{{ $momen->cerita }}</p>
+                                        @endif
+                                    </div>
+
+                                    {{-- type="button" wajib, supaya klik ini gak ikut nge-submit form utama --}}
+                                    <button type="button" wire:click="hapusMomen({{ $momen->id }})"
+                                        wire:confirm="Hapus momen ini?"
+                                        class="text-sm font-medium text-red-600 hover:text-red-800">
+                                        Hapus
+                                    </button>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+
+                    {{-- form mini "Tambah Momen", pakai div (bukan form) karena sudah berada di dalam form utama --}}
+                    <div class="p-4 space-y-4 border border-gray-200 border-dashed rounded-lg">
+                        <p class="text-sm font-medium text-gray-700">Tambah Momen Baru</p>
+
+                        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                            <div>
+                                <label class="block mb-1 text-sm font-medium text-gray-700">Judul</label>
+                                {{-- @keydown.enter.prevent: tekan Enter di sini tidak ikut submit form utama --}}
+                                <input type="text" wire:model="ls_judul" @keydown.enter.prevent
+                                    placeholder="Contoh: Pertemuan Pertama"
+                                    class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900">
+                                @error('ls_judul')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label class="block mb-1 text-sm font-medium text-gray-700">Waktu</label>
+                                <input type="text" wire:model="ls_waktu" @keydown.enter.prevent
+                                    placeholder="Contoh: Agustus 2021"
+                                    class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Cerita</label>
+                            <textarea wire:model="ls_cerita" rows="3"
+                                class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900"></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Foto (opsional)</label>
+
+                            {{-- preview foto yang baru dipilih, belum disimpan ke server --}}
+                            @if ($ls_foto)
+                                <img src="{{ $ls_foto->temporaryUrl() }}" class="object-cover w-24 h-24 mb-2 rounded-lg">
+                            @endif
+
+                            <input type="file" wire:model="ls_foto" accept="image/png,image/jpeg"
+                                class="block text-sm text-gray-600">
+
+                            <div wire:loading wire:target="ls_foto" class="mt-1 text-xs text-gray-400">Mengunggah...</div>
+
+                            @error('ls_foto')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        {{-- type="button" + wire:click, supaya cuma manggil tambahMomen(), bukan save() --}}
+                        <button type="button" wire:click="tambahMomen"
+                            class="px-5 py-2 text-sm font-semibold text-white bg-gray-900 rounded-full hover:bg-gray-700">
+                            Tambah Momen
+                        </button>
+                    </div>
+                @endif
+            </div>
+
             <div class="flex items-center gap-3 pt-2">
                 <button type="submit"
                     class="px-6 py-3 text-sm font-semibold text-white bg-gray-900 rounded-full hover:bg-gray-700">
