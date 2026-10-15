@@ -47,6 +47,10 @@
                     // kalau browser menolak autoplay, abaikan saja supaya tidak muncul error
                     audio.play().catch(() => {});
                 }
+                    // musik YouTube: kalau player-nya sudah siap, mulai putar
+                if (window.ytMusik && window.ytMusik.playVideo) {
+                    window.ytMusik.playVideo();
+                }
             }
         }"
         x-init="history.scrollRestoration = 'manual'; window.scrollTo(0, 0); document.body.style.overflow = 'hidden'"
@@ -55,6 +59,36 @@
         {{-- elemen audio tersembunyi (tanpa controls), loop biar lagu mengulang terus --}}
         @if ($musikTipe === 'audio')
             <audio x-ref="audio" src="{{ $musikSumber }}" loop preload="auto"></audio>
+        @endif
+                {{-- musik dari YouTube: player disembunyiin, yang dipakai cuma suaranya --}}
+        @if ($musikTipe === 'youtube')
+            {{-- wadah player, digeser jauh keluar layar dan gak bisa diklik --}}
+            <div class="fixed w-px h-px overflow-hidden opacity-0 pointer-events-none" style="left: -9999px;">
+                <div id="yt-musik"></div>
+            </div>
+
+            <script>
+                // muat library resmi YouTube IFrame API
+                var ytTag = document.createElement('script');
+                ytTag.src = 'https://www.youtube.com/iframe_api';
+                document.head.appendChild(ytTag);
+
+                // dipanggil otomatis oleh library YouTube setelah selesai dimuat
+                window.onYouTubeIframeAPIReady = function () {
+                    // simpan player di window.ytMusik supaya bisa dipanggil dari fungsi mulaiMusik() nanti
+                    window.ytMusik = new YT.Player('yt-musik', {
+                        height: '1',
+                        width: '1',
+                        videoId: '{{ $musikSumber }}', // ID video hasil ekstrak di blok php tadi
+                        playerVars: {
+                            loop: 1,                    // ulang terus
+                            playlist: '{{ $musikSumber }}', // YouTube butuh ini supaya loop jalan untuk 1 video
+                            controls: 0,                // sembunyiin kontrol
+                            playsinline: 1              // jangan paksa fullscreen di iPhone
+                        }
+                    });
+                };
+            </script>
         @endif
         {{-- COVER: nutup seluruh layar (fixed inset-0), z-50 biar selalu di paling depan --}}
         {{-- x-show="!open" artinya cover ini tampil selama belum diklik --}}
