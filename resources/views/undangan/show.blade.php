@@ -89,7 +89,7 @@
                      1. ubah 'open' jadi true (bikin cover fade out & scroll ke-unlock)
                      2. scroll halaman ke section #detail --}}
                 <button type="button"
-                    @click="open = true; $nextTick(() => document.getElementById('mulai').scrollIntoView({ behavior: 'smooth' }))"
+                                       @click="mulaiMusik(); open = true; $nextTick(() => document.getElementById('mulai').scrollIntoView({ behavior: 'smooth' }))"
                     class="inline-block px-8 py-3 mt-10 text-sm font-semibold text-white transition border border-white rounded-full hover:bg-white hover:text-gray-900">
                     Buka Undangan
                 </button>
