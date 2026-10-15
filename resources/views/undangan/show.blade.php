@@ -5,6 +5,32 @@
 
 @section('content')
 
+
+@php
+    // ambil link musik dari database, jadi string kosong kalau belum diisi
+    $musikUrl = trim($undangan->musik ?? '');
+    $musikTipe = null;   // nanti isinya 'youtube', 'audio', atau null (tidak ada musik)
+    $musikSumber = null; // youtube: ID video, audio: link file yang bisa langsung diputar
+
+    if ($musikUrl !== '') {
+        // YouTube: cocokkan pola watch?v=, youtu.be/, shorts/, atau embed/, lalu ambil ID video (11 karakter)
+        if (preg_match('~(?:youtube\.com/(?:watch\?(?:.*&)?v=|shorts/|embed/)|youtu\.be/)([A-Za-z0-9_-]{11})~', $musikUrl, $cocok)) {
+            $musikTipe = 'youtube';
+            $musikSumber = $cocok[1];
+        }
+        // Google Drive: ambil ID file dari pola /file/d/ID/ atau ?id=ID, lalu ubah jadi link unduh langsung
+        elseif (preg_match('~drive\.google\.com/(?:file/d/|open\?id=|uc\?(?:.*&)?id=)([A-Za-z0-9_-]+)~', $musikUrl, $cocok)) {
+            $musikTipe = 'audio';
+            $musikSumber = 'https://drive.google.com/uc?export=download&id=' . $cocok[1];
+        }
+        // selain itu, anggap link file audio langsung (mp3 dan sejenisnya)
+        else {
+            $musikTipe = 'audio';
+            $musikSumber = $musikUrl;
+        }
+    }
+@endphp
+
     {{-- x-data mendefinisikan variabel 'open' (status cover sudah dibuka atau belum)
          x-init dijalankan sekali saat halaman dimuat, langsung kunci scroll body
          x-effect dijalankan setiap kali 'open' berubah, buka kunci scroll kalau sudah true --}}
@@ -12,10 +38,24 @@
          1. history.scrollRestoration = 'manual' : matiin fitur browser yang nginget posisi scroll terakhir
          2. window.scrollTo(0, 0) : paksa halaman mulai dari paling atas
          3. document.body.style.overflow = 'hidden' : kunci scroll sampai undangan dibuka --}}
-    <div x-data="{ open: false }"
+        <div x-data="{
+            open: false,
+            // dipanggil saat undangan dibuka: coba mulai putar lagu
+            mulaiMusik() {
+                const audio = this.$refs.audio; // ambil elemen audio yang kita beri x-ref di bawah
+                if (audio) {
+                    // kalau browser menolak autoplay, abaikan saja supaya tidak muncul error
+                    audio.play().catch(() => {});
+                }
+            }
+        }"
         x-init="history.scrollRestoration = 'manual'; window.scrollTo(0, 0); document.body.style.overflow = 'hidden'"
         x-effect="document.body.style.overflow = open ? 'auto' : 'hidden'">
 
+        {{-- elemen audio tersembunyi (tanpa controls), loop biar lagu mengulang terus --}}
+        @if ($musikTipe === 'audio')
+            <audio x-ref="audio" src="{{ $musikSumber }}" loop preload="auto"></audio>
+        @endif
         {{-- COVER: nutup seluruh layar (fixed inset-0), z-50 biar selalu di paling depan --}}
         {{-- x-show="!open" artinya cover ini tampil selama belum diklik --}}
         {{-- x-transition bikin animasi fade out yang halus pas ditutup --}}
@@ -196,6 +236,43 @@
 
             
         @endif
+
+                {{-- section love story, cuma tampil kalau undangan punya minimal 1 momen --}}
+        @if ($undangan->loveStories->count() > 0)
+            <div class="max-w-md px-4 py-16 mx-auto text-center border-t border-gray-100">
+                <h2 class="mb-10 font-serif text-2xl font-bold text-gray-900">Love Story</h2>
+
+                {{-- garis vertikal timeline: border kiri, tiap momen digeser ke kanan lewat pl-6 --}}
+                <div class="space-y-10 text-left border-l-2 border-gray-200">
+                    @foreach ($undangan->loveStories as $momen)
+                        <div class="relative pl-6">
+                            {{-- titik penanda di atas garis, posisinya digeser ke kiri biar pas di tengah garis --}}
+                            <span class="absolute w-3 h-3 bg-gray-900 rounded-full -left-[7px] top-1.5"></span>
+
+                            {{-- waktu momen, cuma tampil kalau diisi --}}
+                            @if ($momen->waktu)
+                                <p class="text-xs tracking-widest text-gray-400 uppercase">{{ $momen->waktu }}</p>
+                            @endif
+
+                            <h3 class="mt-1 font-serif text-lg font-semibold text-gray-900">{{ $momen->judul }}</h3>
+
+                            {{-- foto momen, cuma tampil kalau ada --}}
+                            @if ($momen->foto)
+                                <img src="{{ Storage::url($momen->foto) }}"
+                                    class="object-cover w-full h-48 mt-3 rounded-xl">
+                            @endif
+
+                            {{-- cerita momen, cuma tampil kalau diisi --}}
+                            @if ($momen->cerita)
+                                <p class="mt-3 text-sm leading-relaxed text-gray-600">{{ $momen->cerita }}</p>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
+
+
                 {{-- section galeri foto, cuma tampil kalau undangan punya minimal 1 foto --}}
         @if ($undangan->fotos->count() > 0)
             <div class="max-w-md px-4 py-16 mx-auto text-center border-t border-gray-100">
