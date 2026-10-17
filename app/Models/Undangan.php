@@ -80,4 +80,8 @@ class Undangan extends Model
     }
 
 
+    public function pembayarans() {
+        return $this->hasMany(Pembayaran::class)->latest();
+        // latest bkin yg paling baru muncul duluan
+    }
 }

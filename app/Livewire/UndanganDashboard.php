@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\LoveStory;
 use App\Models\UndanganFoto;
 use App\Models\Undangan;
+use App\Models\Pembayaran;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithFileUploads; // trait wajib biar Livewire bisa handle upload file
