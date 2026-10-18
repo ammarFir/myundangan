@@ -141,7 +141,7 @@ class UndanganDashboard extends Component
     {
         //ambil by user id , jadi yg tampil c uma undangan milik dia sendiri
         $undangans = Undangan::where('user_id', auth()->id())
-        ->with(['tamus', 'pembayaran'])
+        ->with(['tamus', 'pembayarans'])
         ->latest()
         ->get();
 

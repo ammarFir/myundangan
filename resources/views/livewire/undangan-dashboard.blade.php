@@ -32,6 +32,14 @@
                             </div>
                             <div class="flex items-center gap-3">
                                 {{-- tombol baru, menampilkan jumlah tamu yang udah RSVP --}}
+                                                                {{-- tombol Aktifkan, cuma muncul kalau undangan masih draft (belum bayar atau pernah ditolak) --}}
+                                @if ($undangan->status === 'draft')
+                                    <button wire:click="toggleBayar({{ $undangan->id }})"
+                                        class="text-sm font-semibold text-green-700 hover:text-green-900">
+                                        Aktifkan
+                                    </button>
+                                @endif
+                                
                                 <button wire:click="toggleRsvp({{ $undangan->id }})"
                                     class="text-sm font-medium text-gray-700 hover:text-gray-900">
                                     Lihat RSVP ({{ $undangan->tamus->count() }})
@@ -69,6 +77,86 @@
                                         @endforeach
                                     </div>
                                 @endif
+                            </div>
+                        @endif
+                                                {{-- ambil pembayaran terbaru undangan ini (relasi pembayarans sudah diurutkan terbaru dulu) --}}
+                        @php $bayarTerakhir = $undangan->pembayarans->first(); @endphp
+
+                        {{-- info status pembayaran, selalu tampil kalau relevan (tanpa harus buka panel) --}}
+                        @if ($undangan->status === 'pending_payment')
+                            <div class="p-4 text-sm text-yellow-800 border-t border-yellow-100 bg-yellow-50">
+                                Bukti pembayaran sudah diterima, sedang dicek admin.
+                            </div>
+                        @elseif ($undangan->status === 'draft' && $bayarTerakhir && $bayarTerakhir->status === 'ditolak')
+                            <div class="p-4 text-sm text-red-800 border-t border-red-100 bg-red-50">
+                                Pembayaran sebelumnya ditolak.
+                                @if ($bayarTerakhir->catatan)
+                                    Alasan: {{ $bayarTerakhir->catatan }}.
+                                @endif
+                                Silakan kirim ulang bukti transfer.
+                            </div>
+                        @elseif ($undangan->status === 'active')
+                            <div class="p-4 text-sm text-green-800 border-t border-green-100 bg-green-50">
+                                Undangan aktif dan bisa dibagikan ke tamu.
+                            </div>
+                        @endif
+
+                        {{-- panel pembayaran, tampil hanya kalau undangan ini yang lagi dibuka via tombol Aktifkan --}}
+                        @if ($bayarFor === $undangan->id)
+                            <div class="p-4 space-y-4 border-t border-gray-100 bg-gray-50">
+                                <p class="text-sm font-medium text-gray-900">Aktifkan Undangan</p>
+
+                                {{-- config('pembayaran.xxx') membaca nilai dari file config/pembayaran.php --}}
+                                <div class="p-4 text-sm bg-white border border-gray-200 rounded-lg">
+                                    <p class="text-gray-500">Total pembayaran</p>
+                                    {{-- number_format bikin 149000 jadi 149.000 --}}
+                                    <p class="text-lg font-semibold text-gray-900">
+                                        Rp {{ number_format(config('pembayaran.harga'), 0, ',', '.') }}
+                                    </p>
+
+                                    <p class="mt-3 text-gray-500">Transfer ke</p>
+                                    <p class="font-medium text-gray-900">
+                                        {{ config('pembayaran.bank') }} {{ config('pembayaran.nomor_rekening') }}
+                                    </p>
+                                    <p class="text-gray-600">a.n. {{ config('pembayaran.atas_nama') }}</p>
+
+                                    {{-- QRIS cuma tampil kalau path gambarnya diisi di config --}}
+                                    @if (config('pembayaran.qris'))
+                                        <img src="{{ asset(config('pembayaran.qris')) }}"
+                                            class="object-contain w-40 h-40 mt-3">
+                                    @endif
+                                </div>
+
+                                <div>
+                                    <label class="block mb-1 text-sm font-medium text-gray-700">Nominal yang ditransfer (opsional)</label>
+                                    <input type="number" wire:model="nominal_bayar"
+                                        class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900">
+                                    @error('nominal_bayar')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div>
+                                    <label class="block mb-1 text-sm font-medium text-gray-700">Bukti transfer</label>
+
+                                    {{-- preview bukti yang baru dipilih (belum dikirim) --}}
+                                    @if ($bukti_bayar)
+                                        <img src="{{ $bukti_bayar->temporaryUrl() }}"
+                                            class="object-cover w-24 h-24 mb-2 rounded-lg">
+                                    @endif
+
+                                    <input type="file" wire:model="bukti_bayar" accept="image/png,image/jpeg"
+                                        class="block text-sm text-gray-600">
+                                    <div wire:loading wire:target="bukti_bayar" class="mt-1 text-xs text-gray-400">Mengunggah...</div>
+                                    @error('bukti_bayar')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <button type="button" wire:click="kirimBukti"
+                                    class="px-5 py-2 text-sm font-semibold text-white bg-gray-900 rounded-full hover:bg-gray-700">
+                                    Kirim Bukti
+                                </button>
                             </div>
                         @endif
                     </div>
