@@ -82,6 +82,10 @@ class UndanganDashboard extends Component
     public $ls_foto = null;
     public $existing_stories = [];
 
+    public $bayarFor = null;
+    public $bukti_bayar = null;
+    public $nominal_bayar = '';
+
 
 
     //aturan validasi tiap field , dipanggil pas simpan data
@@ -137,7 +141,7 @@ class UndanganDashboard extends Component
     {
         //ambil by user id , jadi yg tampil c uma undangan milik dia sendiri
         $undangans = Undangan::where('user_id', auth()->id())
-        ->with('tamus')
+        ->with(['tamus', 'pembayaran'])
         ->latest()
         ->get();
 
@@ -306,6 +310,35 @@ class UndanganDashboard extends Component
     public function toggleRsvp($id) {
         $this->showRsvpFor = $this->showRsvpFor === $id ? null : $id;
     }
+
+    public  function toggleBayar($id) {
+        $this->bayarFor = $this->bayarFor === $id ? null : $id;
+
+        $this->reset(['bukti_bayar', 'nominal_bayar']);
+    }
+
+    public function kirimBukti()
+    {
+        $this->validate([
+            'bukti_bayar' => 'required|image|max:2048',
+            'nominal_bayar' => 'nullable|integer|min:0',
+        ]);
+
+        $undangan = Undangan::where('user_id', auth()->id())->findOrFail($this->bayarFor);
+
+        
+        //hanya undangan berstatus draft yg bole kirim bukti
+        if ($undangan->status !== 'draft') {
+            return;
+        }
+
+
+        $undangan->update(['status' => 'pending_payment']);
+
+        $this->bayarFor = null;
+        $this->reset(['bukti_bayar', 'nominal_bayar']);
+        }
+
 
     public function deleteFoto($fotoId)  {
         UndanganFoto::where('id', $fotoId)->delete();
