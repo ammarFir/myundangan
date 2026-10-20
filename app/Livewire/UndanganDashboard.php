@@ -332,6 +332,12 @@ class UndanganDashboard extends Component
             return;
         }
 
+        Pembayaran::create([
+            'undangan_id' => $undangan->id,
+            'bukti' => $this->bukti_bayar->store('bukti', 'public'),
+            'nominal' => $this->nominal_bayar !== '' ? $this->nominal_bayar : null,
+            'status' => 'menunggu'
+        ]);
 
         $undangan->update(['status' => 'pending_payment']);
 
