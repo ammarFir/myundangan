@@ -22,11 +22,21 @@
                 <a href="#pricing" class="hidden text-sm font-medium text-gray-600 md:inline hover:text-gray-900">Harga</a>
                 <a href="#faq" class="hidden text-sm font-medium text-gray-600 md:inline hover:text-gray-900">FAQ</a>
 
-                <a href="#" class="text-sm font-semibold text-gray-700 hover:text-gray-900">Login</a>
-                <a href="#"
-                    class="px-4 py-2 text-sm font-semibold text-white bg-gray-900 rounded-full hover:bg-gray-700">
-                    Buat Undangan
-                </a>
+                                {{-- @auth: tampil kalau user sudah login, @guest: kalau belum login --}}
+                @auth
+                    {{-- sudah login: langsung ke dashboard --}}
+                    <a href="{{ route('dashboard') }}"
+                        class="px-4 py-2 text-sm font-semibold text-white bg-gray-900 rounded-full hover:bg-gray-700">
+                        Dashboard
+                    </a>
+                @else
+                    {{-- belum login: link ke halaman login & daftar bawaan Breeze --}}
+                    <a href="{{ route('login') }}" class="text-sm font-semibold text-gray-700 hover:text-gray-900">Login</a>
+                    <a href="{{ route('register') }}"
+                        class="px-4 py-2 text-sm font-semibold text-white bg-gray-900 rounded-full hover:bg-gray-700">
+                        Buat Undangan
+                    </a>
+                @endauth
             </div>
 
         </nav>
@@ -45,7 +55,8 @@
             </p>
 
             <div class="flex flex-wrap gap-4 mt-8">
-                <a href="#"
+                                {{-- auth()->check() bernilai true kalau user sudah login: kalau sudah login ke dashboard, kalau belum ke halaman daftar --}}
+                <a href="{{ auth()->check() ? route('dashboard') : route('register') }}"
                     class="px-6 py-3 text-sm font-semibold text-white bg-gray-900 rounded-full hover:bg-gray-700">
                     Buat Undangan Gratis
                 </a>
@@ -326,7 +337,8 @@
                 </ul>
 
         <div class="pt-8 mt-auto">
-    <a href="#"
+                    {{-- belum login ke halaman daftar, sudah login ke dashboard (di sana bisa bikin undangan dan lihat preview) --}}
+                <a href="{{ auth()->check() ? route('dashboard') : route('register') }}"
         class="block px-6 py-3 text-sm font-semibold text-center text-gray-900 border border-gray-300 rounded-full hover:bg-gray-50">
         Coba Preview
     </a>
@@ -375,7 +387,7 @@
                     </li>
                 </ul>
 
-                <a href="#"
+                               <a href="{{ auth()->check() ? route('dashboard') : route('register') }}"
                     class="block px-6 py-3 mt-8 text-sm font-semibold text-center text-gray-900 bg-white rounded-full hover:bg-gray-100">
                     Aktifkan Sekarang
                 </a>
