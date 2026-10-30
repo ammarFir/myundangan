@@ -29,6 +29,9 @@
             {{-- watermark preview sekarang jadi komponen bersama, dipakai semua tema --}}
         <x-undangan.watermark :undangan="$undangan" />
 
+            {{-- pembungkus perilaku dasar: open, kunci scroll, musik, dan watermark --}}
+    <x-undangan.pembungkus :undangan="$undangan">
+
         
         {{-- COVER: nutup seluruh layar (fixed inset-0), z-50 biar selalu di paling depan --}}
         {{-- x-show="!open" artinya cover ini tampil selama belum diklik --}}
@@ -52,6 +55,12 @@
                     {{ $undangan->nama_wanita }}
                 </h1>
 
+                {{-- tanggal akad, cuma tampil kalau ada isinya --}}
+                @if ($undangan->akad_tanggal)
+                <p class="mt-6 text-gray-300">
+                    {{ \Carbon\Carbon::parse($undangan->akad_tanggal)->translatedFormat('l, d F Y')}}
+                </p>
+                @endif
                 {{-- tanggal acara, cuma tampil kalau ada isinya --}}
                                                {{-- countdown sekarang jadi komponen bersama, dipakai semua tema --}}
                 <x-undangan.countdown :undangan="$undangan" />
@@ -60,7 +69,7 @@
                      1. ubah 'open' jadi true (bikin cover fade out & scroll ke-unlock)
                      2. scroll halaman ke section #detail --}}
                 <button type="button"
-                                       @click="mulaiMusikUndangan(); open = true; $nextTick(() => document.getElementById('mulai').scrollIntoView({ behavior: 'smooth' }))"
+                                       @click="bukaUndangan()"
                     class="inline-block px-8 py-3 mt-10 text-sm font-semibold text-white transition border border-white rounded-full hover:bg-white hover:text-gray-900">
                     Buka Undangan
                 </button>
@@ -480,6 +489,6 @@
             </p>
         </div>
 
-    </div>
+        </x-undangan.pembungkus>
 
 @endsection
