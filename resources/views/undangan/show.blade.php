@@ -6,30 +6,7 @@
 @section('content')
 
 
-@php
-    // ambil link musik dari database, jadi string kosong kalau belum diisi
-    $musikUrl = trim($undangan->musik ?? '');
-    $musikTipe = null;   // nanti isinya 'youtube', 'audio', atau null (tidak ada musik)
-    $musikSumber = null; // youtube: ID video, audio: link file yang bisa langsung diputar
 
-    if ($musikUrl !== '') {
-        // YouTube: cocokkan pola watch?v=, youtu.be/, shorts/, atau embed/, lalu ambil ID video (11 karakter)
-        if (preg_match('~(?:youtube\.com/(?:watch\?(?:.*&)?v=|shorts/|embed/)|youtu\.be/)([A-Za-z0-9_-]{11})~', $musikUrl, $cocok)) {
-            $musikTipe = 'youtube';
-            $musikSumber = $cocok[1];
-        }
-        // Google Drive: ambil ID file dari pola /file/d/ID/ atau ?id=ID, lalu ubah jadi link unduh langsung
-        elseif (preg_match('~drive\.google\.com/(?:file/d/|open\?id=|uc\?(?:.*&)?id=)([A-Za-z0-9_-]+)~', $musikUrl, $cocok)) {
-            $musikTipe = 'audio';
-            $musikSumber = 'https://drive.google.com/uc?export=download&id=' . $cocok[1];
-        }
-        // selain itu, anggap link file audio langsung (mp3 dan sejenisnya)
-        else {
-            $musikTipe = 'audio';
-            $musikSumber = $musikUrl;
-        }
-    }
-@endphp
 
     {{-- x-data mendefinisikan variabel 'open' (status cover sudah dibuka atau belum)
          x-init dijalankan sekali saat halaman dimuat, langsung kunci scroll body
@@ -40,56 +17,14 @@
          3. document.body.style.overflow = 'hidden' : kunci scroll sampai undangan dibuka --}}
         <div x-data="{
             open: false,
-            // dipanggil saat undangan dibuka: coba mulai putar lagu
-            mulaiMusik() {
-                const audio = this.$refs.audio; // ambil elemen audio yang kita beri x-ref di bawah
-                if (audio) {
-                    // kalau browser menolak autoplay, abaikan saja supaya tidak muncul error
-                    audio.play().catch(() => {});
-                }
-                    // musik YouTube: kalau player-nya sudah siap, mulai putar
-                if (window.ytMusik && window.ytMusik.playVideo) {
-                    window.ytMusik.playVideo();
-                }
-            }
         }"
         x-init="history.scrollRestoration = 'manual'; window.scrollTo(0, 0); document.body.style.overflow = 'hidden'"
         x-effect="document.body.style.overflow = open ? 'auto' : 'hidden'">
 
-        {{-- elemen audio tersembunyi (tanpa controls), loop biar lagu mengulang terus --}}
-        @if ($musikTipe === 'audio')
-            <audio x-ref="audio" src="{{ $musikSumber }}" loop preload="auto"></audio>
-        @endif
-                {{-- musik dari YouTube: player disembunyiin, yang dipakai cuma suaranya --}}
-        @if ($musikTipe === 'youtube')
-            {{-- wadah player, digeser jauh keluar layar dan gak bisa diklik --}}
-            <div class="fixed w-px h-px overflow-hidden opacity-0 pointer-events-none" style="left: -9999px;">
-                <div id="yt-musik"></div>
-            </div>
-
-            <script>
-                // muat library resmi YouTube IFrame API
-                var ytTag = document.createElement('script');
-                ytTag.src = 'https://www.youtube.com/iframe_api';
-                document.head.appendChild(ytTag);
-
-                // dipanggil otomatis oleh library YouTube setelah selesai dimuat
-                window.onYouTubeIframeAPIReady = function () {
-                    // simpan player di window.ytMusik supaya bisa dipanggil dari fungsi mulaiMusik() nanti
-                    window.ytMusik = new YT.Player('yt-musik', {
-                        height: '1',
-                        width: '1',
-                        videoId: '{{ $musikSumber }}', // ID video hasil ekstrak di blok php tadi
-                        playerVars: {
-                            loop: 1,                    // ulang terus
-                            playlist: '{{ $musikSumber }}', // YouTube butuh ini supaya loop jalan untuk 1 video
-                            controls: 0,                // sembunyiin kontrol
-                            playsinline: 1              // jangan paksa fullscreen di iPhone
-                        }
-                    });
-                };
-            </script>
-        @endif
+                    {{-- musik dari YouTube: player disembunyiin, yang dipakai cuma suaranya --}}
+      
+              {{-- musik sekarang jadi komponen bersama, dipakai semua tema --}}
+        <x-undangan.musik :undangan="$undangan" />
 
             {{-- watermark preview sekarang jadi komponen bersama, dipakai semua tema --}}
         <x-undangan.watermark :undangan="$undangan" />
@@ -125,7 +60,7 @@
                      1. ubah 'open' jadi true (bikin cover fade out & scroll ke-unlock)
                      2. scroll halaman ke section #detail --}}
                 <button type="button"
-                                       @click="mulaiMusik(); open = true; $nextTick(() => document.getElementById('mulai').scrollIntoView({ behavior: 'smooth' }))"
+                                       @click="mulaiMusikUndangan(); open = true; $nextTick(() => document.getElementById('mulai').scrollIntoView({ behavior: 'smooth' }))"
                     class="inline-block px-8 py-3 mt-10 text-sm font-semibold text-white transition border border-white rounded-full hover:bg-white hover:text-gray-900">
                     Buka Undangan
                 </button>
