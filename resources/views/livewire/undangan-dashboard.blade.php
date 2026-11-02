@@ -240,6 +240,22 @@
                 </div>
             </div>
 
+            {{-- PILIH TEMA, daftar pilihannya diambil otomatis dari config/temas.php --}}
+            <div>
+                <label class="block mb-1 text-sm font-medium text-gray-700">Tema Undangan</label>
+                {{-- wire:model menghubungkan pilihan ini dengan variabel $tema di file .php --}}
+                <select wire:model="tema"
+                    class="w-full border-gray-300 rounded-lg focus:border-gray-900 focus:ring-gray-900">
+                    {{-- looping semua tema: $kunci = nilai yang disimpan (misal 'klasik'), $item['nama'] = teks yang tampil --}}
+                    @foreach (config('temas.daftar') as $kunci => $item)
+                        <option value="{{ $kunci }}">{{ $item['nama'] }}</option>
+                    @endforeach
+                </select>
+                @error('tema')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+
             {{-- SECTION RESEPSI --}}
             <div class="pt-6 border-t border-gray-200">
                 <h3 class="mb-4 font-semibold text-gray-900">Resepsi</h3>

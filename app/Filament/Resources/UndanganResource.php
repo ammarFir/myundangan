@@ -48,8 +48,13 @@ class UndanganResource extends Resource
                     ->unique(ignoreRecord: true)
                     ->maxLength(255),
 
-                Forms\Components\TextInput::make('tema')
-                    ->maxLength(255),
+                Forms\Components\Select::make('tema')
+                    ->options(
+                        //collect() + map() mengubah daftar tema jadi pasangan 'kunci' => 'nama' untuk dropdwon
+                        collect(config('temas.daftar'))->map(fn ($tema) => $tema['nama'])->toArray()      
+                    )
+                    ->default(config('temas.default'))
+                    ->required(),
 
 
 

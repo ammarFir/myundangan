@@ -12,7 +12,7 @@ return [
     'daftar' => [
 
     'klasik' => [
-        'klasik' => 'Klasik' ,
+        'nama' => 'Klasik' ,
         'deskripsi' => 'Tema gelap sederhana dengan cover layar penuh',
         'view' => 'undangan.show',
         'thumbnail' => '',

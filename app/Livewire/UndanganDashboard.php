@@ -25,6 +25,7 @@ class UndanganDashboard extends Component
     public $nama_pria = '';
     public $nama_wanita = '';
     public $link_streaming = '';
+    public $tema = 'klasik';
     public $musik = '';
     public $ayat_teks = '';
     public $ayat_arti = '';
@@ -93,6 +94,7 @@ class UndanganDashboard extends Component
         return [
             'nama_pria' => 'required|string|max:255',
             'nama_wanita' => 'required|string|max:255',
+            'tema' => 'required |in:' .implode(',', array_keys(config('temas.daftar'))),
             'link_streaming' => 'nullable|url',
             'musik' => 'nullable|url',
             'ayat_teks' => 'nullable|string',
@@ -167,6 +169,7 @@ class UndanganDashboard extends Component
 
         $this->nama_pria = $undangan->nama_pria;
         $this->nama_wanita = $undangan->nama_wanita;
+        $this->tema = array_key_exists($undangan->tema, config('temas.daftar')) ?$undangan->tema : config('temas.default');
         $this->link_streaming = $undangan->link_streaming;
         $this->musik = $undangan->musik;
         $this->ayat_teks = $undangan->ayat_teks;
@@ -228,6 +231,7 @@ class UndanganDashboard extends Component
         $data = [
             'nama_pria' => $this->nama_pria,
             'nama_wanita' => $this->nama_wanita,
+            'tema' => $this->tema,
             'link_streaming' => $this->link_streaming,
             'musik' => $this->musik,
             'ayat_teks' => $this->ayat_teks,
@@ -256,7 +260,10 @@ class UndanganDashboard extends Component
             'rekening_bank' => $this->rekening_bank,
             'rekening_nomor' => $this->rekening_nomor,
             'rekening_nama' => $this->rekening_nama,
+            
         ];
+
+        $data = array_map(fn ($nilai) => $nilai === '' ? null : $nilai, $data);
 
         // kalau user upload foto baru, simpan file-nya dan catat path-nya
         // kalau tidak upload foto baru, biarkan kosong (nanti dipertahankan pakai foto lama)
@@ -402,6 +409,8 @@ class UndanganDashboard extends Component
         $this->editingId = null;
         $this->nama_pria = '';
         $this->nama_wanita = '';
+        //tidak diisi ''(kosong), krna field dropdown itu required jadi back to default
+        $this->tema = config('temas.default');
         $this->link_streaming = '';
         $this->musik = '';
         $this->ayat_teks = '';
