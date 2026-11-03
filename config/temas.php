@@ -17,5 +17,11 @@ return [
         'view' => 'undangan.show',
         'thumbnail' => '',
     ],
+
+    'floral' => [
+        'nama' => 'Floral',
+        'deskripsi' => 'Tema terang dengan hiasan bunga dan cover tirai yang membuka',
+        'thumbnail' => '',
+    ]
 ],
 ];
