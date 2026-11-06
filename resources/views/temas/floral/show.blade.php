@@ -29,41 +29,92 @@
         }
     </style>
 
-    {{-- gambar bunga, daun, dan kelopak dibuat sekali di sini, lalu dipakai berulang lewat <use> --}}
-    {{-- nanti kalau sudah punya gambar PNG sendiri, bagian ini bisa diganti tag img --}}
-    <svg width="0" height="0" style="position: absolute;" aria-hidden="true">
-        <defs>
-            {{-- bunga: 5 kelopak lonjong diputar mengelilingi pusat, plus bulatan emas di tengah --}}
-            <symbol id="floral-bunga" viewBox="-50 -50 100 100">
-                @foreach ([0, 72, 144, 216, 288] as $sudut)
-                    <ellipse cx="0" cy="-22" rx="14" ry="24" fill="#f3c1cc" fill-opacity="0.92" transform="rotate({{ $sudut }})" />
-                @endforeach
-                <circle r="9" fill="#e6b450" />
-            </symbol>
-            {{-- daun: bentuk lonjong runcing warna hijau sage --}}
-            <symbol id="floral-daun" viewBox="0 0 100 60">
-                <path d="M0,30 C25,-5 75,-5 100,30 C75,65 25,65 0,30 Z" fill="#9db38a" fill-opacity="0.9" />
-            </symbol>
-            {{-- kelopak tunggal untuk animasi jatuh --}}
-            <symbol id="floral-kelopak" viewBox="0 0 20 30">
-                <ellipse cx="10" cy="15" rx="8" ry="13" fill="#f3c1cc" />
-            </symbol>
-        </defs>
-    </svg>
 
-    {{-- pembungkus perilaku dasar (open, kunci scroll, musik, watermark) --}}
-    <x-undangan.pembungkus :undangan="$undangan">
 
-        @php
-            // daftar hiasan untuk tiap sisi tirai: posisi atas, jarak dari tepi luar, lebar, rotasi, jenis
-            $hiasan = [
-                ['atas' => '3%',  'tepi' => '-18%', 'lebar' => '75%', 'putar' => 0,   'jenis' => 'bunga'],
-                ['atas' => '26%', 'tepi' => '-26%', 'lebar' => '60%', 'putar' => 35,  'jenis' => 'daun'],
-                ['atas' => '44%', 'tepi' => '-14%', 'lebar' => '70%', 'putar' => 20,  'jenis' => 'bunga'],
-                ['atas' => '70%', 'tepi' => '-24%', 'lebar' => '62%', 'putar' => -25, 'jenis' => 'daun'],
-                ['atas' => '78%', 'tepi' => '-10%', 'lebar' => '68%', 'putar' => 10,  'jenis' => 'bunga'],
-            ];
-        @endphp
+{{-- nanti kalau sudah punya gambar PNG sendiri, bagian ini bisa diganti tag img --}}
+<svg width="0" height="0" style="position: absolute;" aria-hidden="true">
+    <defs>
+        <symbol id="floral-bunga" viewBox="-50 -50 100 100">
+            @foreach ([0, 72, 144, 216, 288] as $sudut)
+                <ellipse cx="0" cy="-22" rx="14" ry="24" fill="#f3c1cc" fill-opacity="0.92" transform="rotate({{ $sudut }})" />
+            @endforeach
+            <circle r="9" fill="#e6b450" />
+        </symbol>
+        <symbol id="floral-daun" viewBox="0 0 100 60">
+            <path d="M0,30 C25,-5 75,-5 100,30 C75,65 25,65 0,30 Z" fill="#9db38a" fill-opacity="0.9" />
+        </symbol>
+        <symbol id="floral-kelopak" viewBox="0 0 20 30">
+            <ellipse cx="10" cy="15" rx="8" ry="13" fill="#f3c1cc" />
+        </symbol>
+    </defs>
+</svg>
+
+<x-undangan.pembungkus :undangan="$undangan">
+
+@php
+    // Grid halus (banyak sel kecil) + jitter besar → posisi terasa random,
+    // tapi tetap anti-tabrakan karena 1 sel = maksimal 1 bunga.
+    $kolom = 5;    // 5 kolom → sel 20%
+    $baris = 6;    // 6 baris → sel ~16.7%
+
+    // bikin daftar semua sel
+    $sel = [];
+    for ($b = 0; $b < $baris; $b++) {
+        for ($k = 0; $k < $kolom; $k++) {
+            $sel[] = ['baris' => $b, 'kolom' => $k];
+        }
+    }
+    shuffle($sel);
+
+    $jumlahBunga = 16;            // 16 dari 30 sel → padat tapi masih ada celah
+    $sel = array_slice($sel, 0, $jumlahBunga);
+
+    $lebarSel  = 100 / $kolom;    // 20%
+    $tinggiSel = 100 / $baris;    // 16.7%
+
+    $hiasan = [];
+    foreach ($sel as $s) {
+        // ukuran bervariasi per bunga → kesan random lebih kuat
+        $lebarBunga = rand(10, 18);
+
+        // jitter besar: geser sampai ±40% dari ukuran sel, tapi dijaga
+        // supaya bunga (setengah lebarnya) nggak keluar sel → anti-nabrak
+        $jitterX = rand(-8, 8);
+        $jitterY = rand(-5, 5);
+
+        $atas = round($s['baris'] * $tinggiSel + $tinggiSel/2 + $jitterY - $lebarBunga/4, 1);
+        $kiri = round($s['kolom'] * $lebarSel  + $lebarSel/2  + $jitterX - $lebarBunga/2, 1);
+
+        // clamp biar nggak keluar area 0–100%
+        $atas = max(0, min(100 - $lebarBunga, $atas));
+        $kiri = max(0, min(100 - $lebarBunga, $kiri));
+
+        // rotasi lebih variatif
+        $putar = rand(-70, 70);
+
+        // opacity bervariasi → ada yang "di belakang", ada yang "di depan"
+        $opasitas = round(rand(60, 100) / 100, 2);
+
+        // nilai 'tepi' dihitung dari 'kiri' (tetap ada biar markup lama aman)
+        $tepiKiri  = $kiri;
+        $tepiKanan = -(100 - $kiri);
+
+        $hiasan[] = [
+            'atas'       => $atas . '%',
+            'kiri'       => $kiri . '%',
+            'tepi'       => $tepiKiri . '%',
+            'tepi_kanan' => round($tepiKanan, 1) . '%',
+            'lebar'      => $lebarBunga . '%',
+            'putar'      => $putar,
+            'opasitas'   => $opasitas,
+            'jenis'      => 'bunga',
+        ];
+    }
+
+    // acak urutan render → z-index natural ikut random (yang belakangan nimpa)
+    shuffle($hiasan);
+@endphp
+
 
         {{-- COVER: menutup layar selama belum dibuka. Saat open jadi true: tirai bergeser keluar, lalu seluruh cover memudar --}}
         {{-- leave transition: durasi 1 detik, mulai memudar setelah jeda 300ms supaya tirai sempat bergeser dulu --}}
@@ -160,8 +211,243 @@
 
         {{-- titik tujuan scroll setelah undangan dibuka (wajib ada, dipakai bukaUndangan()) --}}
         <div id="mulai"></div>
+                {{-- warna section sebelumnya (awalnya warna hero), dipakai gelombang pemisah. Tiap section memperbarui nilai ini di akhirnya --}}
+        @php $warnaSebelumnya = '#fbf3ee'; @endphp
 
-        {{-- penanda sementara: section lain (ayat, mempelai, galeri, dst) kita susun di langkah berikutnya --}}
+
+        {{-- SECTION AYAT: hijau sage tua, kartu lebar berbingkai emas dengan bunga di keempat sudut --}}
+        @if ($undangan->ayat_teks)
+            {{-- relative + overflow-hidden: tempat gelombang menempel dan bunga sudut tidak bikin layar bisa digeser ke samping --}}
+            <div class="relative px-6 pb-24 overflow-hidden pt-28" style="background: #4f6b4a;">
+
+                {{-- gelombang di tepi atas, diwarnai warna section sebelumnya --}}
+                @include('temas.floral.partials.gelombang', ['warna' => $warnaSebelumnya])
+
+                {{-- kartu ayat: max-w-3xl jauh lebih lebar dari kolom HP milik Klasik; outline + border membentuk bingkai ganda --}}
+                <div class="relative max-w-3xl px-8 mx-auto text-center py-14 md:px-16"
+                    style="border: 1px solid #c9a24a; outline: 1px solid rgba(201, 162, 74, 0.45); outline-offset: 8px; background: rgba(255, 255, 255, 0.05);">
+
+                    {{-- empat bunga di sudut kartu: posisi tiap sudut dan rotasinya berbeda supaya tidak terlihat seperti stempel --}}
+                    <svg class="absolute w-14 h-14 -top-7 -left-7" style="transform: rotate(-15deg);"><use href="#floral-bunga" width="100%" height="100%" /></svg>
+                    <svg class="absolute w-14 h-14 -top-7 -right-7" style="transform: rotate(20deg);"><use href="#floral-bunga" width="100%" height="100%" /></svg>
+                    <svg class="absolute w-14 h-14 -bottom-7 -left-7" style="transform: rotate(35deg);"><use href="#floral-bunga" width="100%" height="100%" /></svg>
+                    <svg class="absolute w-14 h-14 -bottom-7 -right-7" style="transform: rotate(-30deg);"><use href="#floral-bunga" width="100%" height="100%" /></svg>
+
+                    {{-- judul kecil di atas ayat --}}
+                    <p class="text-sm uppercase floral-serif" style="color: #c9a24a; letter-spacing: 0.35em;">Dengan Menyebut Nama-Nya</p>
+
+                    {{-- teks ayat: jauh lebih besar dari Klasik (text-2xl, text-3xl di layar lebar), warna krem --}}
+                    <p class="mt-6 text-2xl italic leading-relaxed md:text-3xl floral-serif" style="color: #fbf3ee;">
+                        "{{ $undangan->ayat_teks }}"
+                    </p>
+
+                    {{-- garis emas pendek sebagai pemisah antara ayat dan artinya --}}
+                    <div class="w-16 mx-auto mt-8" style="border-top: 1px solid #c9a24a;"></div>
+
+                    {{-- arti atau terjemahan, cuma tampil kalau diisi --}}
+                    @if ($undangan->ayat_arti)
+                        <p class="mt-6 text-lg leading-relaxed floral-serif" style="color: #e6ecdf;">
+                            {{ $undangan->ayat_arti }}
+                        </p>
+                    @endif
+
+                    {{-- sumber ayat, cuma tampil kalau diisi --}}
+                    @if ($undangan->ayat_sumber)
+                        <p class="mt-4 text-sm font-semibold floral-serif" style="color: #c9a24a; letter-spacing: 0.2em;">
+                            {{ $undangan->ayat_sumber }}
+                        </p>
+                    @endif
+                </div>
+            </div>
+
+            {{-- catat warna section ini sebagai "warna sebelumnya" untuk gelombang section berikutnya --}}
+            @php $warnaSebelumnya = '#4f6b4a'; @endphp
+        @endif
+        {{-- SECTION MEMPELAI: tampil kalau salah satu nama lengkap diisi --}}
+        {{-- SECTION MEMPELAI: blush, foto lengkung berbingkai emas, dua mempelai berdampingan dan bertingkat --}}
+        @if ($undangan->nama_lengkap_pria || $undangan->nama_lengkap_wanita)
+            @php
+                // true kalau kedua mempelai diisi: menentukan apakah layar lebar dibagi 2 kolom atau 1 kolom saja
+                $duaMempelai = $undangan->nama_lengkap_pria && $undangan->nama_lengkap_wanita;
+            @endphp
+
+            <div class="relative px-6 pb-24 overflow-hidden pt-28" style="background: #f8dfe4;">
+
+                {{-- gelombang di tepi atas, diwarnai warna section sebelumnya --}}
+                @include('temas.floral.partials.gelombang', ['warna' => $warnaSebelumnya])
+
+                <h2 class="text-6xl text-center mb-14 floral-script" style="color: #4f6b4a;">Mempelai</h2>
+
+                {{-- grid: 1 kolom di HP, 2 kolom di layar lebar kalau mempelai ada dua. Lebar max-w-4xl, jauh lebih lebar dari kolom HP milik Klasik --}}
+                <div class="grid max-w-4xl gap-12 mx-auto {{ $duaMempelai ? 'md:grid-cols-2 md:gap-20' : '' }}">
+
+                    {{-- MEMPELAI PRIA: di HP rata kiri (justify-self-start), di layar lebar di kolom kiri --}}
+                    @if ($undangan->nama_lengkap_pria)
+                        <div class="relative justify-self-start md:justify-self-center">
+
+                            {{-- foto berbentuk lengkung: sudut atas dibulatkan penuh (9999px), sudut bawah tegak --}}
+                            <div class="relative w-56 h-72 md:w-64 md:h-80">
+                                @if ($undangan->foto_pria)
+                                    <img src="{{ \Illuminate\Support\Facades\Storage::url($undangan->foto_pria) }}"
+                                        class="object-cover w-full h-full"
+                                        style="border-radius: 9999px 9999px 0 0; border: 5px solid #fff; box-shadow: 0 0 0 2px #c9a24a;">
+                                @else
+                                    {{-- placeholder kalau foto belum diupload: lengkung kosong berisi bunga --}}
+                                    <div class="flex items-center justify-center w-full h-full"
+                                        style="border-radius: 9999px 9999px 0 0; background: #f3c1cc; border: 5px solid #fff; box-shadow: 0 0 0 2px #c9a24a;">
+                                        <svg class="w-20 h-20"><use href="#floral-bunga" width="100%" height="100%" /></svg>
+                                    </div>
+                                @endif
+
+                                {{-- bunga kecil menempel di pojok bawah foto, menimpa tepi bingkai --}}
+                                <svg class="absolute w-16 h-16 -bottom-5 -right-5" style="transform: rotate(25deg);"><use href="#floral-bunga" width="100%" height="100%" /></svg>
+                            </div>
+
+                            {{-- nama dan keterangan, ditaruh di bawah foto dengan lebar mengikuti foto --}}
+                            <div class="w-56 mt-8 md:w-64">
+                                <h3 class="text-4xl leading-tight floral-script" style="color: #b0566f;">{{ $undangan->nama_lengkap_pria }}</h3>
+
+                                @if ($undangan->anak_ke_pria)
+                                    <p class="mt-2 text-lg floral-serif" style="color: #4f6b4a;">{{ $undangan->anak_ke_pria }}</p>
+                                @endif
+
+                                @if ($undangan->orang_tua_pria)
+                                    <p class="text-base floral-serif" style="color: #7a6258;">{{ $undangan->orang_tua_pria }}</p>
+                                @endif
+
+                                {{-- &#64; = simbol @ yang aman di Blade; ltrim membuang @ kalau user sudah mengetiknya --}}
+                                @if ($undangan->instagram_pria)
+                                    <a href="https://instagram.com/{{ ltrim($undangan->instagram_pria, '@') }}" target="_blank"
+                                        class="inline-block mt-2 text-sm underline floral-serif" style="color: #b0566f;">
+                                        &#64;{{ ltrim($undangan->instagram_pria, '@') }}
+                                    </a>
+                                @endif
+                            </div>
+                        </div>
+                    @endif
+
+                    {{-- tanda & : di HP berada di antara dua kartu (md:hidden), di layar lebar ditaruh melayang di tengah dua kolom --}}
+                    @if ($duaMempelai)
+                        <p class="text-6xl text-center md:hidden floral-script" style="color: #c9a24a;">&</p>
+                        <p class="absolute hidden text-8xl md:block floral-script"
+                            style="color: #c9a24a; left: 50%; top: 58%; transform: translate(-50%, -50%);">&</p>
+                    @endif
+
+                    {{-- MEMPELAI WANITA: di HP rata kanan (justify-self-end), di layar lebar turun 64px (md:mt-16) supaya bertingkat --}}
+                    @if ($undangan->nama_lengkap_wanita)
+                        <div class="relative justify-self-end md:justify-self-center {{ $duaMempelai ? 'md:mt-16' : '' }}">
+
+                            <div class="relative w-56 h-72 md:w-64 md:h-80">
+                                @if ($undangan->foto_wanita)
+                                    <img src="{{ \Illuminate\Support\Facades\Storage::url($undangan->foto_wanita) }}"
+                                        class="object-cover w-full h-full"
+                                        style="border-radius: 9999px 9999px 0 0; border: 5px solid #fff; box-shadow: 0 0 0 2px #c9a24a;">
+                                @else
+                                    <div class="flex items-center justify-center w-full h-full"
+                                        style="border-radius: 9999px 9999px 0 0; background: #f3c1cc; border: 5px solid #fff; box-shadow: 0 0 0 2px #c9a24a;">
+                                        <svg class="w-20 h-20"><use href="#floral-bunga" width="100%" height="100%" /></svg>
+                                    </div>
+                                @endif
+
+                                {{-- bunga kecil di pojok bawah-kiri (kebalikan sisi pria) --}}
+                                <svg class="absolute w-16 h-16 -bottom-5 -left-5" style="transform: rotate(-25deg);"><use href="#floral-bunga" width="100%" height="100%" /></svg>
+                            </div>
+
+                            <div class="w-56 mt-8 md:w-64">
+                                <h3 class="text-4xl leading-tight floral-script" style="color: #b0566f;">{{ $undangan->nama_lengkap_wanita }}</h3>
+
+                                @if ($undangan->anak_ke_wanita)
+                                    <p class="mt-2 text-lg floral-serif" style="color: #4f6b4a;">{{ $undangan->anak_ke_wanita }}</p>
+                                @endif
+
+                                @if ($undangan->orang_tua_wanita)
+                                    <p class="text-base floral-serif" style="color: #7a6258;">{{ $undangan->orang_tua_wanita }}</p>
+                                @endif
+
+                                @if ($undangan->instagram_wanita)
+                                    <a href="https://instagram.com/{{ ltrim($undangan->instagram_wanita, '@') }}" target="_blank"
+                                        class="inline-block mt-2 text-sm underline floral-serif" style="color: #b0566f;">
+                                        &#64;{{ ltrim($undangan->instagram_wanita, '@') }}
+                                    </a>
+                                @endif
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+            {{-- catat warna section ini sebagai "warna sebelumnya" untuk gelombang section berikutnya --}}
+            @php $warnaSebelumnya = '#f8dfe4'; @endphp
+        @endif
+
+
+                {{-- SECTION LOVE STORY: krem, timeline tengah dengan kartu gantian kiri dan kanan --}}
+        @if ($undangan->loveStories->count() > 0)
+            <div class="relative px-6 pb-24 overflow-hidden pt-28" style="background: #fbf3ee;">
+
+                {{-- gelombang di tepi atas, diwarnai warna section sebelumnya --}}
+                @include('temas.floral.partials.gelombang', ['warna' => $warnaSebelumnya])
+
+                <h2 class="text-6xl text-center mb-14 floral-script" style="color: #4f6b4a;">Love Story</h2>
+
+                {{-- wadah timeline: lebar max-w-4xl, relative supaya garis tengah bisa diposisikan di dalamnya --}}
+                <div class="relative max-w-4xl mx-auto">
+
+                    {{-- garis vertikal: di HP di kiri (left-4), di layar lebar di tengah (md:left-1/2); -translate-x-1/2 memusatkan garisnya tepat di titik itu --}}
+                    <div class="absolute top-0 bottom-0 w-px -translate-x-1/2 left-4 md:left-1/2" style="background: #c9a24a;"></div>
+
+                    <div class="space-y-12">
+                        @foreach ($undangan->loveStories as $momen)
+                            @php
+                                // momen ke-1, 3, 5, dst (index genap) di kiri; momen ke-2, 4, dst di kanan
+                                $dikiri = $loop->index % 2 === 0;
+                            @endphp
+
+                            {{-- baris satu momen. HP: lebar penuh dengan jarak kiri untuk garis. Layar lebar: setengah lebar; kanan didorong ke sisi kanan (md:ml-auto) --}}
+                            <div class="relative pl-12 md:w-1/2 {{ $dikiri ? 'md:pl-0 md:pr-12' : 'md:ml-auto md:pl-12' }}">
+
+                                {{-- titik penanda di garis. Posisi mengikuti sisi kartu: kiri-kartu menempel di tepi kanannya, kanan-kartu di tepi kirinya --}}
+                                <span class="absolute w-5 h-5 -translate-x-1/2 rounded-full top-8 left-4 {{ $dikiri ? 'md:left-auto md:right-0 md:translate-x-1/2' : 'md:left-0' }}"
+                                    style="background: #b0566f; border: 4px solid #fbf3ee; box-shadow: 0 0 0 2px #c9a24a;"></span>
+
+                                {{-- kartu momen: putih, sudut bulat, bayangan lembut. Di layar lebar teks kartu kiri rata kanan supaya menghadap garis --}}
+                                <div class="relative p-6 bg-white rounded-3xl {{ $dikiri ? 'md:text-right' : '' }}"
+                                    style="border: 1px solid #f3c1cc; box-shadow: 0 6px 20px rgba(176, 86, 111, 0.12);">
+
+                                    {{-- bunga kecil di pojok atas kartu, sisi pojoknya bergantian mengikuti sisi kartu --}}
+                                    <svg class="absolute w-12 h-12 -top-5 {{ $dikiri ? '-left-4' : '-right-4' }}"
+                                        style="transform: rotate({{ $dikiri ? '-20' : '20' }}deg);">
+                                        <use href="#floral-bunga" width="100%" height="100%" />
+                                    </svg>
+
+                                    {{-- waktu momen, cuma tampil kalau diisi --}}
+                                    @if ($momen->waktu)
+                                        <p class="text-sm uppercase floral-serif" style="color: #c9a24a; letter-spacing: 0.2em;">{{ $momen->waktu }}</p>
+                                    @endif
+
+                                    <h3 class="mt-1 text-4xl leading-tight floral-script" style="color: #b0566f;">{{ $momen->judul }}</h3>
+
+                                    {{-- foto momen, cuma tampil kalau ada. Sudut dibulatkan dan diberi bingkai putih tipis --}}
+                                    @if ($momen->foto)
+                                        <img src="{{ \Illuminate\Support\Facades\Storage::url($momen->foto) }}"
+                                            class="object-cover w-full mt-4 h-52 rounded-2xl">
+                                    @endif
+
+                                    {{-- cerita momen, cuma tampil kalau diisi --}}
+                                    @if ($momen->cerita)
+                                        <p class="mt-4 text-base leading-relaxed floral-serif" style="color: #7a6258;">{{ $momen->cerita }}</p>
+                                    @endif
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+
+            {{-- catat warna section ini sebagai "warna sebelumnya" untuk gelombang section berikutnya --}}
+            @php $warnaSebelumnya = '#fbf3ee'; @endphp
+        @endif
+        {{-- penanda sementara: galeri, acara, dan section lain menyusul di langkah berikutnya --}}
         <div class="px-4 py-24 text-center floral-serif" style="background: #fbf3ee; color: #9a7b6d;">
             <p>Section lain untuk tema Floral menyusul.</p>
         </div>
