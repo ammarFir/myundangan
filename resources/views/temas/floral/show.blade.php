@@ -447,11 +447,165 @@
             {{-- catat warna section ini sebagai "warna sebelumnya" untuk gelombang section berikutnya --}}
             @php $warnaSebelumnya = '#fbf3ee'; @endphp
         @endif
+
+
+
+                {{-- SECTION GALERI: hijau sage tua, kolase foto dengan ukuran bervariasi --}}
+        @if ($undangan->fotos->count() > 0)
+            <div class="relative px-6 pb-24 overflow-hidden pt-28" style="background: #4f6b4a;">
+
+                {{-- gelombang di tepi atas, diwarnai warna section sebelumnya --}}
+                @include('temas.floral.partials.gelombang', ['warna' => $warnaSebelumnya])
+
+                <h2 class="text-6xl text-center floral-script" style="color: #fbf3ee;">Galeri</h2>
+                <p class="mt-2 mb-12 text-lg text-center floral-serif" style="color: #c9a24a; letter-spacing: 0.2em;">Potret Kenangan Kami</p>
+
+                {{-- grid kolase: 2 kolom di HP, 3 kolom di layar lebar; tinggi tiap baris dikunci supaya foto bisa memanjang ke bawah (row-span) --}}
+                {{-- grid-flow-dense: kotak kosong otomatis diisi foto berikutnya, jadi susunan tetap rapat tanpa celah --}}
+                <div class="grid max-w-5xl grid-flow-dense grid-cols-2 gap-3 mx-auto md:grid-cols-3 md:gap-4 auto-rows-[9rem] md:auto-rows-[13rem]">
+                    @foreach ($undangan->fotos->sortBy('urutan') as $foto)
+                        @php
+                            // pola ukuran berulang tiap 5 foto, supaya kolase terasa acak tapi tetap teratur
+                            $pola = $loop->index % 5;
+                            // 0 = besar (2 kolom x 2 baris), 3 = tinggi (1 kolom x 2 baris), sisanya kotak kecil biasa
+                            $ukuran = match ($pola) {
+                                0 => 'col-span-2 row-span-2',
+                                3 => 'row-span-2',
+                                default => '',
+                            };
+                            // foto tinggi dibuat lengkung seperti jendela, foto lain sudut membulat biasa
+                            $bentuk = $pola === 3 ? '9999px 9999px 1rem 1rem' : '1rem';
+                        @endphp
+
+                        {{-- w-full h-full: foto mengisi penuh kotaknya; object-cover memotong foto agar tidak gepeng --}}
+                        <div class="overflow-hidden {{ $ukuran }}"
+                            style="border-radius: {{ $bentuk }}; border: 3px solid rgba(251, 243, 238, 0.9); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);">
+                            <img src="{{ \Illuminate\Support\Facades\Storage::url($foto->path) }}"
+                                class="object-cover w-full h-full transition duration-500 hover:scale-105" alt="Foto galeri">
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+
+            {{-- catat warna section ini sebagai "warna sebelumnya" untuk gelombang section berikutnya --}}
+            @php $warnaSebelumnya = '#4f6b4a'; @endphp
+        @endif
+        
+        
+        {{-- SECTION ACARA: blush, kartu Akad dan Resepsi berdampingan dengan tanggal besar --}}
+        @php
+            // kumpulkan dua acara dalam satu daftar supaya kartunya cukup ditulis sekali lewat perulangan
+            $acaras = collect([
+                [
+                    'judul' => 'Akad Nikah',
+                    'tanggal' => $undangan->akad_tanggal,
+                    'mulai' => $undangan->akad_waktu_mulai,
+                    'selesai' => $undangan->akad_waktu_selesai,
+                    'lokasi' => $undangan->akad_lokasi,
+                    'alamat' => $undangan->akad_alamat,
+                    'maps' => $undangan->akad_link_maps,
+                ],
+                [
+                    'judul' => 'Resepsi',
+                    'tanggal' => $undangan->resepsi_tanggal,
+                    'mulai' => $undangan->resepsi_waktu_mulai,
+                    'selesai' => $undangan->resepsi_waktu_selesai,
+                    'lokasi' => $undangan->resepsi_lokasi,
+                    'alamat' => $undangan->resepsi_alamat,
+                    'maps' => $undangan->resepsi_link_maps,
+                ],
+            ])->filter(fn ($a) => $a['tanggal']); // buang acara yang tanggalnya belum diisi
+        @endphp
+
+        @if ($acaras->count() > 0)
+            <div id="acara" class="relative px-6 pb-24 overflow-hidden pt-28" style="background: #f8dfe4;">
+
+                {{-- gelombang di tepi atas, diwarnai warna section sebelumnya --}}
+                @include('temas.floral.partials.gelombang', ['warna' => $warnaSebelumnya])
+
+                <h2 class="text-6xl text-center floral-script" style="color: #4f6b4a;">Acara</h2>
+                <p class="max-w-md mx-auto mt-3 mb-16 text-lg text-center floral-serif" style="color: #7a6258;">
+                    Kami bermaksud mengundang Anda dalam acara pernikahan kami pada:
+                </p>
+
+                {{-- grid 2 kolom kalau acara ada dua; kalau cuma satu, kartunya dipusatkan dengan lebar terbatas --}}
+                <div class="grid max-w-5xl gap-14 mx-auto {{ $acaras->count() > 1 ? 'md:grid-cols-2 md:gap-10' : 'max-w-md' }}">
+                    @foreach ($acaras as $acara)
+                        {{-- kartu acara: putih, sudut bulat besar, mt-6 memberi ruang buat bunga yang menempel di atasnya --}}
+                        <div class="relative px-8 pt-14 pb-10 mt-6 text-center bg-white rounded-[2rem]"
+                            style="border: 1px solid #c9a24a; box-shadow: 0 10px 30px rgba(176, 86, 111, 0.15);">
+
+                            {{-- bunga menempel di tengah atas kartu, setengahnya keluar dari tepi --}}
+                            <svg class="absolute w-20 h-20 -translate-x-1/2 -top-10 left-1/2"><use href="#floral-bunga" width="100%" height="100%" /></svg>
+
+                            <h3 class="text-5xl floral-script" style="color: #b0566f;">{{ $acara['judul'] }}</h3>
+
+                            @php $tgl = \Carbon\Carbon::parse($acara['tanggal']); @endphp
+
+                            {{-- nama hari kecil di atas, angka tanggal sangat besar sebagai sorotan, lalu bulan dan tahun --}}
+                            <p class="mt-6 text-sm uppercase floral-serif" style="color: #c9a24a; letter-spacing: 0.3em;">{{ $tgl->translatedFormat('l') }}</p>
+                            <p class="leading-none text-8xl floral-serif" style="color: #4f6b4a; font-weight: 600;">{{ $tgl->format('d') }}</p>
+                            <p class="mt-1 text-xl floral-serif" style="color: #7a6258;">{{ $tgl->translatedFormat('F Y') }}</p>
+
+                            {{-- garis emas pendek sebagai pemisah --}}
+                            <div class="w-16 mx-auto my-6" style="border-top: 1px solid #c9a24a;"></div>
+
+                            {{-- jam mulai (dan selesai kalau diisi), cuma tampil kalau jam mulai diisi --}}
+                            @if ($acara['mulai'])
+                                <p class="text-xl floral-serif" style="color: #7a6258;">
+                                    {{ \Carbon\Carbon::parse($acara['mulai'])->format('H:i') }}
+                                    @if ($acara['selesai'])
+                                        - {{ \Carbon\Carbon::parse($acara['selesai'])->format('H:i') }}
+                                    @endif
+                                    WIB
+                                </p>
+                            @endif
+
+                            {{-- nama tempat, cuma tampil kalau diisi --}}
+                            @if ($acara['lokasi'])
+                                <p class="mt-4 text-2xl floral-serif" style="color: #4f6b4a; font-weight: 600;">{{ $acara['lokasi'] }}</p>
+                            @endif
+
+                            {{-- alamat lengkap, cuma tampil kalau diisi --}}
+                            @if ($acara['alamat'])
+                                <p class="mt-1 text-base leading-relaxed floral-serif" style="color: #9a7b6d;">{{ $acara['alamat'] }}</p>
+                            @endif
+
+                            {{-- tombol Google Maps, cuma tampil kalau link diisi --}}
+                            @if ($acara['maps'])
+                                <a href="{{ $acara['maps'] }}" target="_blank"
+                                    class="inline-block py-3 mt-6 text-sm transition rounded-full px-7 floral-serif hover:opacity-80"
+                                    style="background: #b0566f; color: #fff; letter-spacing: 0.1em;">
+                                    Lihat Lokasi
+                                </a>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+
+            {{-- catat warna section ini sebagai "warna sebelumnya" untuk gelombang section berikutnya --}}
+            @php $warnaSebelumnya = '#f8dfe4'; @endphp
+        @endif
+
+
+                {{-- SECTION RSVP: krem. Background dan gelombang dipasang di sini (milik tema), isinya komponen Livewire dengan tampilan Floral --}}
+        <div class="relative overflow-hidden" style="background: #fbf3ee;">
+            @include('temas.floral.partials.gelombang', ['warna' => $warnaSebelumnya])
+
+            {{-- atribut tampilan memberi tahu RsvpForm untuk memakai file temas/floral/rsvp.blade.php --}}
+            <livewire:rsvp-form :undanganId="$undangan->id" tampilan="temas.floral.rsvp" />
+        </div>
+
+        {{-- catat warna section ini sebagai "warna sebelumnya" untuk gelombang section berikutnya --}}
+        @php $warnaSebelumnya = '#fbf3ee'; @endphp
+
+
         {{-- penanda sementara: galeri, acara, dan section lain menyusul di langkah berikutnya --}}
         <div class="px-4 py-24 text-center floral-serif" style="background: #fbf3ee; color: #9a7b6d;">
             <p>Section lain untuk tema Floral menyusul.</p>
         </div>
-
+        
     </x-undangan.pembungkus>
 
 @endsection

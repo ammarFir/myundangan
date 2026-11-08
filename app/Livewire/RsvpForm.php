@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 use App\Models\Tamu;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class RsvpForm extends Component
@@ -9,6 +10,11 @@ class RsvpForm extends Component
 
     //menerima id dari luar 
     public $undanganId;
+
+    //nama view tampilan
+    //locked nilainya  cuma bisa idubah dari kode sarvar
+    #[Locked]
+    public $tampilan = 'livewire.rsvp-form';
 
     //field form yg diisi tamu
     public $nama = '';
@@ -19,9 +25,10 @@ class RsvpForm extends Component
     public $sudahKirim = false;
 
     //mount = fungsi yg dijalankan component saat pertama kali dibuat/dimuat
-    public function mount ($undanganId) {
+    public function mount ($undanganId, $tampilan = 'livewire.rsvp-form') {
         $this->undanganId = $undanganId;
 
+        $this->tampilan = view()->exists($tampilan) ? $tampilan : 'livewire.rsvp-form';
     }
 
     //aturan  validasi
@@ -53,6 +60,6 @@ class RsvpForm extends Component
 
     public function render()
     {
-        return view('livewire.rsvp-form');
+        return view($this->tampilan);
     }
 }
