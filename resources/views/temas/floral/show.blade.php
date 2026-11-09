@@ -734,6 +734,48 @@
                 </div>
             </div>
 
+
+                    {{-- SECTION PROTOKOL KESEHATAN: krem, teks statis (sama untuk semua undangan), tiap poin berupa lingkaran emas --}}
+        <div class="relative px-6 pb-24 overflow-hidden text-center pt-28" style="background: #fbf3ee;">
+
+            {{-- gelombang di tepi atas, diwarnai warna section sebelumnya --}}
+            @include('temas.floral.partials.gelombang', ['warna' => $warnaSebelumnya])
+
+            <h2 class="text-6xl floral-script" style="color: #4f6b4a;">Protokol Kesehatan</h2>
+            <p class="max-w-md mx-auto mt-3 text-lg mb-14 floral-serif" style="color: #7a6258;">
+                Demi kenyamanan bersama, mohon perhatikan hal-hal berikut saat menghadiri acara.
+            </p>
+
+            @php
+                // daftar protokol, gampang ditambah atau diubah lewat array ini
+                $protokol = [
+                    'Gunakan masker bila sedang kurang sehat',
+                    'Cuci tangan atau gunakan hand sanitizer',
+                    'Jaga jarak dan hindari kerumunan',
+                    'Tetap di rumah bila sedang sakit',
+                ];
+            @endphp
+
+            {{-- 2 kolom di HP, 4 kolom di layar lebar --}}
+            <div class="grid max-w-4xl grid-cols-2 mx-auto gap-x-6 gap-y-10 md:grid-cols-4">
+                @foreach ($protokol as $item)
+                    <div class="flex flex-col items-center">
+                        {{-- lingkaran emas berisi centang hijau --}}
+                        <div class="flex items-center justify-center w-20 h-20 rounded-full"
+                            style="border: 1px solid #c9a24a; outline: 1px solid rgba(201, 162, 74, 0.45); outline-offset: 5px; background: #fff;">
+                            <svg class="w-9 h-9" fill="none" viewBox="0 0 24 24" stroke="#4f6b4a" stroke-width="2" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                        </div>
+                        <p class="max-w-[10rem] mt-5 text-base leading-snug floral-serif" style="color: #7a6258;">{{ $item }}</p>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
+        {{-- catat warna section ini sebagai "warna sebelumnya" untuk gelombang section berikutnya --}}
+        @php $warnaSebelumnya = '#fbf3ee'; @endphp
+
             {{-- catat warna section ini sebagai "warna sebelumnya" untuk gelombang section berikutnya --}}
             @php $warnaSebelumnya = '#4f6b4a'; @endphp
         @endif
