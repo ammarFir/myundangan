@@ -8,6 +8,8 @@ use App\Models\Tamu;
 use Livewire\Component;
 //ucapan form nanti akan jadi livewire component
 
+use Livewire\Attributes\Locked;
+
 
 class UcapanForm extends Component
 {
@@ -15,13 +17,20 @@ class UcapanForm extends Component
     public $undanganId;
     //menerima undangan id dari luar , (dikirim saat component dipanggil dari halaman public)
 
+    //nama view diubah dari kode server tidak dari web
+    #[Locked]
+    public $tampilan = 'livewire.ucapan-form';
+
     public $nama = '';
     public $pesan = '';
 
 
     //mount dijalankan sekali saat component pertama kali dimuat
-    public function mount($undanganId){
+    //$tampilan opsional : kalau tidak dkirim , dipakai tampilan default
+    public function mount($undanganId , $tampilan = 'livewire.ucapan-form'){
         $this->undanganId = $undanganId;
+
+        $this->tampilan = view()->exists($tampilan) ? $tampilan : 'livewire.ucapan-form';
         //this itu object ucapan form
 
         //data dari parameter $undanganId disimpan ke property $this
@@ -68,6 +77,6 @@ class UcapanForm extends Component
 
     public function render()
     {
-        return view('livewire.ucapan-form');
+        return view($this->tampilan);
     }
 }

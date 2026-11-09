@@ -597,9 +597,22 @@
             <livewire:rsvp-form :undanganId="$undangan->id" tampilan="temas.floral.rsvp" />
         </div>
 
+
+
+
         {{-- catat warna section ini sebagai "warna sebelumnya" untuk gelombang section berikutnya --}}
         @php $warnaSebelumnya = '#fbf3ee'; @endphp
 
+                {{-- SECTION UCAPAN: hijau sage tua. Background dan gelombang dipasang di sini, isinya komponen Livewire dengan tampilan Floral --}}
+        <div class="relative overflow-hidden" style="background: #4f6b4a;">
+            @include('temas.floral.partials.gelombang', ['warna' => $warnaSebelumnya])
+
+            {{-- atribut tampilan memberi tahu UcapanForm untuk memakai file temas/floral/ucapan.blade.php --}}
+            <livewire:ucapan-form :undanganId="$undangan->id" tampilan="temas.floral.ucapan" />
+        </div>
+
+        {{-- catat warna section ini sebagai "warna sebelumnya" untuk gelombang section berikutnya --}}
+        @php $warnaSebelumnya = '#4f6b4a'; @endphp
 
         {{-- penanda sementara: galeri, acara, dan section lain menyusul di langkah berikutnya --}}
         <div class="px-4 py-24 text-center floral-serif" style="background: #fbf3ee; color: #9a7b6d;">
