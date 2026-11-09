@@ -614,6 +614,96 @@
         {{-- catat warna section ini sebagai "warna sebelumnya" untuk gelombang section berikutnya --}}
         @php $warnaSebelumnya = '#4f6b4a'; @endphp
 
+
+
+                {{-- SECTION KADO: blush. Rekening tampil sebagai kartu bank, QRIS di kartu putih. Cuma tampil kalau ada data rekening atau QRIS --}}
+        @if ($undangan->rekening_nomor || $undangan->qris_gambar)
+            <div class="relative px-6 pb-24 overflow-hidden pt-28" style="background: #f8dfe4;">
+
+                {{-- gelombang di tepi atas, diwarnai warna section sebelumnya --}}
+                @include('temas.floral.partials.gelombang', ['warna' => $warnaSebelumnya])
+
+                <h2 class="text-6xl text-center floral-script" style="color: #4f6b4a;">Kado</h2>
+                <p class="max-w-md mx-auto mt-3 text-lg text-center mb-14 floral-serif" style="color: #7a6258;">
+                    Doa restu Anda adalah hadiah terbaik. Namun bila ingin memberi tanda kasih, dapat melalui:
+                </p>
+
+                {{-- 2 kolom di layar lebar kalau rekening dan QRIS sama-sama ada; kalau cuma satu, dipusatkan dengan lebar terbatas --}}
+                <div class="grid items-start max-w-4xl gap-10 mx-auto {{ ($undangan->rekening_nomor && $undangan->qris_gambar) ? 'md:grid-cols-2' : 'max-w-md' }}">
+
+                    {{-- KARTU REKENING: bentuknya seperti kartu bank, gradasi hijau sage dengan tulisan emas dan krem --}}
+                    @if ($undangan->rekening_nomor)
+                        {{-- x-data khusus kartu ini: variabel copied (feedback 'Tersalin') dan fungsi salin() dengan cara cadangan untuk HTTP --}}
+                        <div x-data="{
+                                copied: false,
+                                salin(teks) {
+                                    // cara modern, cuma jalan di HTTPS atau localhost
+                                    if (navigator.clipboard && window.isSecureContext) {
+                                        navigator.clipboard.writeText(teks);
+                                    } else {
+                                        // cara cadangan: bikin textarea sementara, pilih isinya, lalu copy
+                                        const el = document.createElement('textarea');
+                                        el.value = teks;
+                                        document.body.appendChild(el);
+                                        el.select();
+                                        document.execCommand('copy');
+                                        document.body.removeChild(el);
+                                    }
+                                    this.copied = true; // tampilkan tulisan 'Tersalin!'
+                                    setTimeout(() => this.copied = false, 2000); // balik normal setelah 2 detik
+                                }
+                            }"
+                            class="text-center">
+
+                            <div class="relative px-7 py-8 text-left overflow-hidden rounded-[1.75rem]"
+                                style="background: linear-gradient(135deg, #4f6b4a, #6f8a68); box-shadow: 0 12px 30px rgba(79, 107, 74, 0.35); border: 1px solid #c9a24a;">
+
+                                {{-- bunga besar setengah keluar dari pojok kanan atas kartu, semi transparan sebagai dekorasi --}}
+                                <svg class="absolute w-32 h-32 -top-8 -right-8 opacity-30" style="transform: rotate(20deg);"><use href="#floral-bunga" width="100%" height="100%" /></svg>
+
+                                {{-- nama bank --}}
+                                @if ($undangan->rekening_bank)
+                                    <p class="relative text-lg uppercase floral-serif" style="color: #c9a24a; letter-spacing: 0.3em; font-weight: 600;">{{ $undangan->rekening_bank }}</p>
+                                @endif
+
+                                {{-- nomor rekening, besar dengan jarak huruf lebar seperti nomor kartu --}}
+                                <p class="relative mt-8 text-3xl floral-serif" style="color: #fbf3ee; letter-spacing: 0.12em; font-weight: 600;">{{ $undangan->rekening_nomor }}</p>
+
+                                {{-- nama pemilik rekening --}}
+                                @if ($undangan->rekening_nama)
+                                    <p class="relative mt-6 text-sm uppercase floral-serif" style="color: #c9a24a; letter-spacing: 0.2em;">Atas Nama</p>
+                                    <p class="relative text-xl floral-serif" style="color: #fbf3ee;">{{ $undangan->rekening_nama }}</p>
+                                @endif
+                            </div>
+
+                            {{-- tombol salin. @js() mengubah nomor jadi teks JavaScript yang aman, jadi tanda kutip di data tidak bisa merusak kode --}}
+                            <button type="button" @click="salin(@js($undangan->rekening_nomor))"
+                                class="py-3 mt-6 text-base transition rounded-full px-7 floral-serif hover:opacity-80"
+                                style="background: #b0566f; color: #fff; letter-spacing: 0.1em;">
+                                <span x-show="!copied">Salin Nomor Rekening</span>
+                                <span x-show="copied">Tersalin!</span>
+                            </button>
+                        </div>
+                    @endif
+
+                    {{-- KARTU QRIS: kartu putih berbingkai emas dengan bunga di tengah atas, sama gayanya dengan kartu Acara --}}
+                    @if ($undangan->qris_gambar)
+                        <div class="relative px-8 pt-14 pb-8 mt-6 text-center bg-white rounded-[2rem]"
+                            style="border: 1px solid #c9a24a; box-shadow: 0 10px 30px rgba(176, 86, 111, 0.15);">
+
+                            <svg class="absolute w-20 h-20 -translate-x-1/2 -top-10 left-1/2"><use href="#floral-bunga" width="100%" height="100%" /></svg>
+
+                            <p class="text-4xl floral-script" style="color: #b0566f;">Scan QRIS</p>
+                            <img src="{{ \Illuminate\Support\Facades\Storage::url($undangan->qris_gambar) }}"
+                                class="object-contain w-56 h-56 mx-auto mt-4" alt="QRIS">
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+            {{-- catat warna section ini sebagai "warna sebelumnya" untuk gelombang section berikutnya --}}
+            @php $warnaSebelumnya = '#f8dfe4'; @endphp
+        @endif
         {{-- penanda sementara: galeri, acara, dan section lain menyusul di langkah berikutnya --}}
         <div class="px-4 py-24 text-center floral-serif" style="background: #fbf3ee; color: #9a7b6d;">
             <p>Section lain untuk tema Floral menyusul.</p>
