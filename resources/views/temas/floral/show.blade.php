@@ -701,6 +701,42 @@
                 </div>
             </div>
 
+
+
+                    {{-- SECTION LIVE STREAMING: hijau sage tua. Cuma tampil kalau link streaming diisi --}}
+        @if ($undangan->link_streaming)
+            <div class="relative px-6 pb-24 overflow-hidden text-center pt-28" style="background: #4f6b4a;">
+
+                {{-- gelombang di tepi atas, diwarnai warna section sebelumnya --}}
+                @include('temas.floral.partials.gelombang', ['warna' => $warnaSebelumnya])
+
+                <div class="max-w-md mx-auto">
+                    {{-- lingkaran emas berisi ikon play. Dua lingkaran (luar tipis, dalam tebal) memberi kesan bingkai ganda --}}
+                    <div class="flex items-center justify-center w-32 h-32 mx-auto rounded-full"
+                        style="border: 1px solid #c9a24a; outline: 1px solid rgba(201, 162, 74, 0.45); outline-offset: 8px;">
+                        <svg class="w-14 h-14" fill="#c9a24a" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M8 5v14l11-7z" />
+                        </svg>
+                    </div>
+
+                    <h2 class="mt-10 text-6xl floral-script" style="color: #fbf3ee;">Live Streaming</h2>
+
+                    <p class="mt-4 text-lg leading-relaxed floral-serif" style="color: #e6ecdf;">
+                        Bagi keluarga dan sahabat yang berhalangan hadir, silakan saksikan acara kami secara langsung melalui tautan berikut.
+                    </p>
+
+                    {{-- rel="noopener" supaya halaman tujuan tidak bisa mengakses halaman undangan ini --}}
+                    <a href="{{ $undangan->link_streaming }}" target="_blank" rel="noopener"
+                        class="inline-block py-3 mt-8 text-lg transition rounded-full px-9 floral-serif hover:opacity-80"
+                        style="background: #b0566f; color: #fff; letter-spacing: 0.1em;">
+                        Tonton Siaran Langsung
+                    </a>
+                </div>
+            </div>
+
+            {{-- catat warna section ini sebagai "warna sebelumnya" untuk gelombang section berikutnya --}}
+            @php $warnaSebelumnya = '#4f6b4a'; @endphp
+        @endif
             {{-- catat warna section ini sebagai "warna sebelumnya" untuk gelombang section berikutnya --}}
             @php $warnaSebelumnya = '#f8dfe4'; @endphp
         @endif
