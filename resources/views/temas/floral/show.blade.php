@@ -174,6 +174,13 @@
                         </p>
                     @endif
 
+                                        {{-- countdown ke hari-H. Warna diatur lewat parameter supaya cocok dengan cover krem (tanpa parameter, warnanya putih untuk tema gelap) --}}
+                    <x-undangan.countdown :undangan="$undangan"
+                        warna-kotak="rgba(176, 86, 111, 0.12)"
+                        warna-angka="#b0566f"
+                        warna-label="#9a7b6d"
+                        kelas-font="floral-serif" />   
+
                     {{-- nama tamu dari URL (?to=...), cuma tampil kalau ada --}}
                     @if (request()->query('to'))
                         <div class="mt-8 floral-serif" style="color: #9a7b6d;">
@@ -702,6 +709,10 @@
             </div>
 
 
+               {{-- catat warna section ini sebagai "warna sebelumnya" untuk gelombang section berikutnya --}}
+            @php $warnaSebelumnya = '#f8dfe4'; @endphp
+        @endif
+
 
                     {{-- SECTION LIVE STREAMING: hijau sage tua. Cuma tampil kalau link streaming diisi --}}
         @if ($undangan->link_streaming)
@@ -733,6 +744,10 @@
                     </a>
                 </div>
             </div>
+
+            {{-- catat warna section ini sebagai "warna sebelumnya" untuk gelombang section berikutnya --}}
+            @php $warnaSebelumnya = '#4f6b4a'; @endphp
+        @endif
 
 
                     {{-- SECTION PROTOKOL KESEHATAN: krem, teks statis (sama untuk semua undangan), tiap poin berupa lingkaran emas --}}
@@ -776,15 +791,43 @@
         {{-- catat warna section ini sebagai "warna sebelumnya" untuk gelombang section berikutnya --}}
         @php $warnaSebelumnya = '#fbf3ee'; @endphp
 
-            {{-- catat warna section ini sebagai "warna sebelumnya" untuk gelombang section berikutnya --}}
-            @php $warnaSebelumnya = '#4f6b4a'; @endphp
-        @endif
-            {{-- catat warna section ini sebagai "warna sebelumnya" untuk gelombang section berikutnya --}}
-            @php $warnaSebelumnya = '#f8dfe4'; @endphp
-        @endif
-        {{-- penanda sementara: galeri, acara, dan section lain menyusul di langkah berikutnya --}}
-        <div class="px-4 py-24 text-center floral-serif" style="background: #fbf3ee; color: #9a7b6d;">
-            <p>Section lain untuk tema Floral menyusul.</p>
+            
+         
+                {{-- FOOTER: hijau sage tua, kalimat penutup, nama pasangan, dan credit --}}
+        <div class="relative px-6 pt-32 overflow-hidden text-center pb-14" style="background: #4f6b4a;">
+
+            {{-- gelombang di tepi atas, diwarnai warna section sebelumnya --}}
+            @include('temas.floral.partials.gelombang', ['warna' => $warnaSebelumnya])
+
+            {{-- dua bunga besar semi transparan di pojok bawah kiri dan kanan, sebagai dekorasi penutup --}}
+            <svg class="absolute w-48 h-48 opacity-25 -bottom-16 -left-14" style="transform: rotate(15deg);"><use href="#floral-bunga" width="100%" height="100%" /></svg>
+            <svg class="absolute w-48 h-48 opacity-25 -bottom-16 -right-14" style="transform: rotate(-20deg);"><use href="#floral-bunga" width="100%" height="100%" /></svg>
+
+            <div class="relative max-w-md mx-auto">
+                {{-- bunga kecil di atas kalimat penutup --}}
+                <svg class="mx-auto mb-6 w-14 h-14"><use href="#floral-bunga" width="100%" height="100%" /></svg>
+
+                {{-- kalimat penutup --}}
+                <p class="text-xl leading-relaxed floral-serif" style="color: #e6ecdf;">
+                    Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir
+                    dan memberikan doa restu.
+                </p>
+
+                <p class="mt-10 text-sm uppercase floral-serif" style="color: #c9a24a; letter-spacing: 0.35em;">Kami yang berbahagia</p>
+
+                {{-- nama pasangan dengan tulisan tangan, besar --}}
+                <h2 class="mt-3 text-6xl leading-tight floral-script" style="color: #fbf3ee;">
+                    {{ $undangan->nama_pria }}
+                    <span style="color: #c9a24a;">&</span>
+                    {{ $undangan->nama_wanita }}
+                </h2>
+
+                {{-- garis emas pendek sebagai pemisah --}}
+                <div class="w-16 mx-auto mt-10" style="border-top: 1px solid #c9a24a;"></div>
+
+                {{-- credit --}}
+                <p class="mt-6 text-sm floral-serif" style="color: #c9d6c2;">Dibuat dengan Undanganku</p>
+            </div>
         </div>
         
     </x-undangan.pembungkus>
