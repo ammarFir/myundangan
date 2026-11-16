@@ -16,6 +16,7 @@ return [
         'deskripsi' => 'Tema gelap sederhana dengan cover layar penuh',
         'view' => 'undangan.show',//view yg dirender
         'thumbnail' => '',
+        'demo' => 'demo-klasik'
     ],
 
     'floral' => [
@@ -23,6 +24,7 @@ return [
         'deskripsi' => 'Tema terang dengan hiasan bunga dan cover tirai yang membuka',
         'view' => 'temas.floral.show',
         'thumbnail' => '',
+        'demo' => 'demo-floral'
     ]
 
     
