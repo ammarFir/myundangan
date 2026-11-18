@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\UndanganPublicController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DemoTemaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +20,9 @@ Route::view('/', 'home');
 // halaman undangan publik, {slug} bagian dinamis yang isinya beda tiap undangan
 // contoh: /u/rian-vina-64f2a3
 Route::get('/u/{slug}', [UndanganPublicController::class, 'show'])->name('undangan.show');
+
+//halman demo tema (kiri web , kanan hp)
+Route::get('/demo/{tema}', [DemoTemaController::class, 'show'])->name('demo.show');
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])

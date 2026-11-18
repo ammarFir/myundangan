@@ -15,7 +15,7 @@ class DemoTemaController extends Controller
         //ambil slug undangan contoh milik tema ini
         $slugDemo = $daftarTema[$tema]['demo'] ?? null;
 
-        //kalau tema belum punya undangan demo maka 404
+        //kalau tema beluwem punya undangan demo maka 404
         abort_unless($slugDemo && Undangan::where('slug', $slugDemo)->exists(), 404);
 
         //kirim ke halaman demo: data tema terpilih dll
