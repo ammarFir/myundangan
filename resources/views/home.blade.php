@@ -140,29 +140,32 @@
 
             {{-- Track tema --}}
             <div x-ref="track" class="flex gap-6 px-2 py-2 overflow-x-auto scroll-smooth no-scrollbar">
-                @php
-                    $themes = [
-                        'Timeless Snapshot',
-                        'Mildness',
-                        'Visual Journey',
-                        'Snap Photo',
-                        'Elegant Light',
-                        'Serein',
-                    ];
-                @endphp
+                
+                                {{-- daftar tema diambil dari config/temas.php, jadi tema baru otomatis muncul di sini --}}
+                @foreach (config('temas.daftar') as $kunci => $tema)
+                    {{-- lewati tema yang belum punya undangan demo, karena tombol Lihat Demo-nya akan menuju 404 --}}
+                    @continue(empty($tema['demo']))
 
-                @foreach ($themes as $theme)
                     <div class="flex-shrink-0 w-56">
                         <div class="w-full overflow-hidden bg-gray-100 h-80 rounded-2xl">
-                            <img src="https://placehold.co/300x450/e5e7eb/6b7280?text={{ urlencode($theme) }}"
-                                class="object-cover w-full h-full">
+                            {{-- kalau thumbnail diisi di config pakai gambar itu, kalau kosong pakai gambar placeholder bertuliskan nama tema --}}
+                            @if (!empty($tema['thumbnail']))
+                                <img src="{{ asset($tema['thumbnail']) }}" alt="{{ $tema['nama'] }}"
+                                    class="object-cover w-full h-full">
+                            @else
+                                <img src="https://placehold.co/300x450/e5e7eb/6b7280?text={{ urlencode($tema['nama']) }}"
+                                    alt="{{ $tema['nama'] }}" class="object-cover w-full h-full">
+                            @endif
                         </div>
-                        <p class="mt-3 font-medium text-center text-gray-900">{{ $theme }}</p>
+                        <p class="mt-3 font-medium text-center text-gray-900">{{ $tema['nama'] }}</p>
                         <div class="mt-2 text-center">
-                            <a href="#" class="text-sm text-gray-600 underline hover:text-gray-900">Lihat Demo</a>
+                            {{-- route('demo.show', $kunci) menghasilkan alamat /demo/klasik atau /demo/floral --}}
+                            <a href="{{ route('demo.show', $kunci) }}"
+                                class="text-sm text-gray-600 underline hover:text-gray-900">Lihat Demo</a>
                         </div>
                     </div>
                 @endforeach
+
             </div>
 
             {{-- Tombol kiri-kanan di bawah track --}}
